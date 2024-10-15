@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  // Create Product Tiers
   const premierTier = await prisma.productTier.create({
     data: {
       tierLevel: 1,
@@ -37,33 +38,16 @@ async function main() {
     },
   });
 
+  // Create Group Categories
   const productsCategory = await prisma.groupCategory.create({
     data: {
       name: "Products",
     },
   });
 
-  const cabinetryGroup = await prisma.lineItemGroup.create({
+  const servicesCategory = await prisma.groupCategory.create({
     data: {
-      name: "Cabinetry",
-      groupCategory: {
-        connect: { id: productsCategory.id },
-      },
-    },
-  });
-
-  const plumbingCategory = await prisma.groupCategory.create({
-    data: {
-      name: "Products",
-    },
-  });
-
-  const plumbingFixturesGroup = await prisma.lineItemGroup.create({
-    data: {
-      name: "Plumbing Fixtures",
-      groupCategory: {
-        connect: { id: productsCategory.id },
-      },
+      name: "Services",
     },
   });
 
@@ -113,111 +97,135 @@ async function main() {
         create: [
           {
             name: "Kitchen",
-            lineItems: {
+            lineItemGroups: {
               create: [
                 {
-                  name: "Kitchen Sink Faucet",
-                  quantity: 2,
-                  marginPercent: 20,
-                  unitId: pieceUnit.id,
-                  lineItemGroupId: plumbingFixturesGroup.id,
-                  lineItemOptions: {
-                    create: [
-                      {
-                        lowCostInDollars: 3000,
-                        highCostInDollars: 5000,
-                        priceAdjustmentPercentage: 15,
-                        description:
-                          "Premier custom faucets with awesome finish.",
-                        productTier: {
-                          connect: { id: premierTier.id },
-                        },
-                        isSelected: true,
-                      },
-                      {
-                        lowCostInDollars: 4000,
-                        highCostInDollars: 6000,
-                        priceAdjustmentPercentage: 10,
-                        description:
-                          "Designer faucets with really cool hardware.",
-                        productTier: {
-                          connect: { id: designerTier.id },
-                        },
-                        isSelected: false,
-                      },
-                      {
-                        lowCostInDollars: 4000,
-                        highCostInDollars: 6000,
-                        priceAdjustmentPercentage: 10,
-                        description: "Luxury faucets with custom hardware.",
-                        productTier: {
-                          connect: { id: luxuryTier.id },
-                        },
-                        isSelected: false,
-                      },
-                    ],
+                  name: "Cabinets",
+                  groupCategory: {
+                    connect: { id: productsCategory.id },
                   },
-                },
-                {
-                  name: "Custom Cabinets",
-                  quantity: 10,
-                  marginPercent: 20,
-                  unitId: pieceUnit.id,
-                  lineItemGroupId: cabinetryGroup.id,
-                  lineItemOptions: {
+                  lineItems: {
                     create: [
                       {
-                        lowCostInDollars: 3000,
-                        highCostInDollars: 5000,
-                        priceAdjustmentPercentage: 15,
-                        description:
-                          "Premier custom cabinets with wood finish.",
-                        productTier: {
-                          connect: { id: premierTier.id },
+                        name: "Custom Cabinets",
+                        quantity: 10,
+                        marginDecimal: 0.2,
+                        unit: {
+                          connect: { id: pieceUnit.id },
                         },
-                        isSelected: true,
-                      },
-                      {
-                        lowCostInDollars: 4000,
-                        highCostInDollars: 6000,
-                        priceAdjustmentPercentage: 10,
-                        description:
-                          "Designer cabinets with, frankly, just OK hardware.",
-                        productTier: {
-                          connect: { id: luxuryTier.id },
+                        lineItemOptions: {
+                          create: [
+                            {
+                              lowCostInDollarsPerUnit: 3000,
+                              highCostInDollarsPerUnit: 5000,
+                              priceAdjustmentDecimal: 0.15,
+                              description:
+                                "Premier custom cabinets with wood finish.",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: true,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 4000,
+                              highCostInDollarsPerUnit: 6000,
+                              priceAdjustmentDecimal: 0.1,
+                              description:
+                                "Luxury cabinets with custom hardware.",
+                              productTier: {
+                                connect: { id: luxuryTier.id },
+                              },
+                              isSelected: false,
+                            },
+                          ],
                         },
-                        isSelected: false,
-                      },
-                      {
-                        lowCostInDollars: 4000,
-                        highCostInDollars: 6000,
-                        priceAdjustmentPercentage: 10,
-                        description: "Luxury cabinets with custom hardware.",
-                        productTier: {
-                          connect: { id: luxuryTier.id },
-                        },
-                        isSelected: false,
                       },
                     ],
                   },
                 },
                 {
                   name: "Flooring",
-                  quantity: 500,
-                  marginPercent: 12,
-                  unitId: squareFootUnit.id,
-                  lineItemGroupId: cabinetryGroup.id,
-                  lineItemOptions: {
+                  groupCategory: {
+                    connect: { id: servicesCategory.id },
+                  },
+                  lineItems: {
                     create: [
                       {
-                        lowCostInDollars: 2000,
-                        highCostInDollars: 4000,
-                        priceAdjustmentPercentage: 5,
-                        description: "Designer-grade hardwood flooring.",
-                        productTier: {
-                          connect: { id: designerTier.id },
+                        name: "Hardwood Flooring",
+                        quantity: 500,
+                        marginDecimal: 0.12,
+                        unit: {
+                          connect: { id: squareFootUnit.id },
                         },
-                        isSelected: true,
+                        lineItemOptions: {
+                          create: [
+                            {
+                              lowCostInDollarsPerUnit: 2000,
+                              highCostInDollarsPerUnit: 4000,
+                              priceAdjustmentDecimal: 0.05,
+                              description: "Designer-grade hardwood flooring.",
+                              productTier: {
+                                connect: { id: designerTier.id },
+                              },
+                              isSelected: true,
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  });
+
+  const project2 = await prisma.project.create({
+    data: {
+      name: "Smith Living Room Update",
+      description: "Modern living room with new furniture and flooring.",
+      clients: {
+        connect: [{ id: client2.id }],
+      },
+      users: {
+        connect: [{ id: user2.id }],
+      },
+      areas: {
+        create: [
+          {
+            name: "Living Room",
+            lineItemGroups: {
+              create: [
+                {
+                  name: "Furniture",
+                  groupCategory: {
+                    connect: { id: productsCategory.id },
+                  },
+                  lineItems: {
+                    create: [
+                      {
+                        name: "Sofa Set",
+                        quantity: 1,
+                        marginDecimal: 0.18,
+                        unit: {
+                          connect: { id: pieceUnit.id },
+                        },
+                        lineItemOptions: {
+                          create: [
+                            {
+                              exactCostInDollarsPerUnit: 2000,
+                              priceAdjustmentDecimal: 0.08,
+                              description: "Luxury leather sofa set.",
+                              productTier: {
+                                connect: { id: luxuryTier.id },
+                              },
+                              isSelected: true,
+                            },
+                          ],
+                        },
                       },
                     ],
                   },

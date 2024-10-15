@@ -42,11 +42,11 @@ model Project {
 }
 
 model ProjectArea {
-  id        String     @id @default(uuid())
-  name      String
-  projectId String
-  project   Project    @relation(fields: [projectId], references: [id])
-  lineItems LineItem[]
+  id             String          @id @default(uuid())
+  name           String
+  projectId      String
+  project        Project         @relation(fields: [projectId], references: [id])
+  lineItemGroups LineItemGroup[]
 }
 
 model LineItem {
@@ -54,13 +54,11 @@ model LineItem {
   name            String
   quantity        Float
   unitId          String
+  marginDecimal   Float
   unit            LineItemUnit     @relation(fields: [unitId], references: [id])
-  projectAreaId   String
-  projectArea     ProjectArea      @relation(fields: [projectAreaId], references: [id])
   lineItemOptions LineItemOption[]
   lineItemGroupId String
   lineItemGroup   LineItemGroup    @relation(fields: [lineItemGroupId], references: [id])
-  marginPercent   Float
 }
 
 model LineItemUnit {
@@ -71,10 +69,10 @@ model LineItemUnit {
 
 model LineItemOption {
   id                        String      @id @default(uuid())
-  lowCostInDollars          Float?
-  highCostInDollars         Float?
-  exactCostInDollars        Float?
-  priceAdjustmentPercentage Float
+  lowCostInDollarsPerUnit   Float?
+  highCostInDollarsPerUnit  Float?
+  exactCostInDollarsPerUnit Float?
+  priceAdjustmentDecimal    Float
   description               String
   productTierId             String
   productTier               ProductTier @relation(fields: [productTierId], references: [id])
@@ -86,9 +84,11 @@ model LineItemOption {
 model LineItemGroup {
   id              String        @id @default(uuid())
   name            String
+  projectAreaId   String
+  projectArea     ProjectArea   @relation(fields: [projectAreaId], references: [id])
   groupCategoryId String
   groupCategory   GroupCategory @relation(fields: [groupCategoryId], references: [id])
-  LineItem        LineItem[]
+  lineItems       LineItem[]
 }
 
 model GroupCategory {
