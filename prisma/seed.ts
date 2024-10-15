@@ -32,9 +32,21 @@ async function main() {
     },
   });
 
-  const pieceUnit = await prisma.lineItemUnit.create({
+  const piecesUnit = await prisma.lineItemUnit.create({
     data: {
-      name: "Piece",
+      name: "Pieces",
+    },
+  });
+
+  const slabUnit = await prisma.lineItemUnit.create({
+    data: {
+      name: "Slabs",
+    },
+  });
+
+  const sheetUnit = await prisma.lineItemUnit.create({
+    data: {
+      name: "Sheets",
     },
   });
 
@@ -48,6 +60,12 @@ async function main() {
   const servicesCategory = await prisma.groupCategory.create({
     data: {
       name: "Services",
+    },
+  });
+
+  const administrativeCategory = await prisma.groupCategory.create({
+    data: {
+      name: "Administrative",
     },
   });
 
@@ -81,12 +99,12 @@ async function main() {
     },
   });
 
-  // Create Projects
+  // Create Projects and Related Data
   const project1 = await prisma.project.create({
     data: {
       name: "Doe Family Kitchen Remodel",
       description:
-        "A complete kitchen renovation with modern cabinets and flooring.",
+        "A complete kitchen renovation with modern cabinets, countertops, and flooring.",
       clients: {
         connect: [{ id: client1.id }],
       },
@@ -100,6 +118,106 @@ async function main() {
             lineItemGroups: {
               create: [
                 {
+                  name: "Permits",
+                  groupCategory: {
+                    connect: { id: administrativeCategory.id },
+                  },
+                  lineItems: {
+                    create: [
+                      {
+                        name: "Building Permit",
+                        quantity: 1,
+                        marginDecimal: 0.2,
+                        unitId: piecesUnit.id,
+                        lineItemOptions: {
+                          create: [
+                            {
+                              lowCostInDollarsPerUnit: 3000,
+                              highCostInDollarsPerUnit: 5000,
+                              priceAdjustmentDecimal: 0.15,
+                              description: "Basic Permit",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: true,
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        name: "Plumbing Permit",
+                        quantity: 5,
+                        marginDecimal: 0.18,
+                        unitId: piecesUnit.id,
+                        lineItemOptions: {
+                          create: [
+                            {
+                              lowCostInDollarsPerUnit: 1500,
+                              highCostInDollarsPerUnit: 3000,
+                              priceAdjustmentDecimal: 0.12,
+                              description: "Basic Permit for Plumbing",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: true,
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  name: "Project Management",
+                  groupCategory: {
+                    connect: { id: administrativeCategory.id },
+                  },
+                  lineItems: {
+                    create: [
+                      {
+                        name: "Project Management",
+                        quantity: 1,
+                        marginDecimal: 0.2,
+                        unitId: piecesUnit.id,
+                        lineItemOptions: {
+                          create: [
+                            {
+                              lowCostInDollarsPerUnit: 3000,
+                              highCostInDollarsPerUnit: 5000,
+                              priceAdjustmentDecimal: 0.15,
+                              description: "Premier Management",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: true,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 3000,
+                              highCostInDollarsPerUnit: 5000,
+                              priceAdjustmentDecimal: 0.15,
+                              description: "Designer Management",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: true,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 3000,
+                              highCostInDollarsPerUnit: 5000,
+                              priceAdjustmentDecimal: 0.15,
+                              description: "Luxury Management",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: true,
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
                   name: "Cabinets",
                   groupCategory: {
                     connect: { id: productsCategory.id },
@@ -110,9 +228,7 @@ async function main() {
                         name: "Custom Cabinets",
                         quantity: 10,
                         marginDecimal: 0.2,
-                        unit: {
-                          connect: { id: pieceUnit.id },
-                        },
+                        unitId: piecesUnit.id,
                         lineItemOptions: {
                           create: [
                             {
@@ -137,6 +253,58 @@ async function main() {
                               },
                               isSelected: false,
                             },
+                            {
+                              lowCostInDollarsPerUnit: 3500,
+                              highCostInDollarsPerUnit: 4500,
+                              priceAdjustmentDecimal: 0.12,
+                              description:
+                                "Designer cabinets with modern handles.",
+                              productTier: {
+                                connect: { id: designerTier.id },
+                              },
+                              isSelected: false,
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        name: "Cabinet Shelves",
+                        quantity: 5,
+                        marginDecimal: 0.18,
+                        unitId: piecesUnit.id,
+                        lineItemOptions: {
+                          create: [
+                            {
+                              lowCostInDollarsPerUnit: 1500,
+                              highCostInDollarsPerUnit: 3000,
+                              priceAdjustmentDecimal: 0.12,
+                              description:
+                                "Premier cabinet shelves with reinforced wood.",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: true,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 2000,
+                              highCostInDollarsPerUnit: 3500,
+                              priceAdjustmentDecimal: 0.1,
+                              description: "Luxury reinforced shelves.",
+                              productTier: {
+                                connect: { id: luxuryTier.id },
+                              },
+                              isSelected: false,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 2000,
+                              highCostInDollarsPerUnit: 3500,
+                              priceAdjustmentDecimal: 0.1,
+                              description: "designer reinforced shelves.",
+                              productTier: {
+                                connect: { id: designerTier.id },
+                              },
+                              isSelected: false,
+                            },
                           ],
                         },
                       },
@@ -144,26 +312,87 @@ async function main() {
                   },
                 },
                 {
-                  name: "Flooring",
+                  name: "Countertops",
                   groupCategory: {
-                    connect: { id: servicesCategory.id },
+                    connect: { id: productsCategory.id },
                   },
                   lineItems: {
                     create: [
                       {
-                        name: "Hardwood Flooring",
-                        quantity: 500,
-                        marginDecimal: 0.12,
-                        unit: {
-                          connect: { id: squareFootUnit.id },
-                        },
+                        name: "Granite Countertops",
+                        quantity: 1,
+                        marginDecimal: 0.2,
+                        unitId: slabUnit.id,
                         lineItemOptions: {
                           create: [
                             {
-                              lowCostInDollarsPerUnit: 2000,
-                              highCostInDollarsPerUnit: 4000,
-                              priceAdjustmentDecimal: 0.05,
-                              description: "Designer-grade hardwood flooring.",
+                              lowCostInDollarsPerUnit: 3000,
+                              highCostInDollarsPerUnit: 6000,
+                              priceAdjustmentDecimal: 0.15,
+                              description:
+                                "Luxury granite countertops with custom edges.",
+                              productTier: {
+                                connect: { id: luxuryTier.id },
+                              },
+                              isSelected: true,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 4500,
+                              highCostInDollarsPerUnit: 7000,
+                              priceAdjustmentDecimal: 0.1,
+                              description:
+                                "Premier quartz countertops with polished finish.",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: false,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 4000,
+                              highCostInDollarsPerUnit: 6000,
+                              priceAdjustmentDecimal: 0.12,
+                              description:
+                                "Designer marble countertops with custom patterns.",
+                              productTier: {
+                                connect: { id: designerTier.id },
+                              },
+                              isSelected: false,
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        name: "Quartz Countertops",
+                        quantity: 1,
+                        marginDecimal: 0.22,
+                        unitId: slabUnit.id,
+                        lineItemOptions: {
+                          create: [
+                            {
+                              lowCostInDollarsPerUnit: 5000,
+                              highCostInDollarsPerUnit: 8000,
+                              priceAdjustmentDecimal: 0.2,
+                              description: "Luxury quartz countertops.",
+                              productTier: {
+                                connect: { id: luxuryTier.id },
+                              },
+                              isSelected: false,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 4000,
+                              highCostInDollarsPerUnit: 7000,
+                              priceAdjustmentDecimal: 0.15,
+                              description: "Premier quartz with patterns.",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: true,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 4000,
+                              highCostInDollarsPerUnit: 7000,
+                              priceAdjustmentDecimal: 0.15,
+                              description: "designer quartz with patterns.",
                               productTier: {
                                 connect: { id: designerTier.id },
                               },
@@ -175,54 +404,94 @@ async function main() {
                     ],
                   },
                 },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  });
-
-  const project2 = await prisma.project.create({
-    data: {
-      name: "Smith Living Room Update",
-      description: "Modern living room with new furniture and flooring.",
-      clients: {
-        connect: [{ id: client2.id }],
-      },
-      users: {
-        connect: [{ id: user2.id }],
-      },
-      areas: {
-        create: [
-          {
-            name: "Living Room",
-            lineItemGroups: {
-              create: [
                 {
-                  name: "Furniture",
+                  name: "Backsplash",
                   groupCategory: {
                     connect: { id: productsCategory.id },
                   },
                   lineItems: {
                     create: [
                       {
-                        name: "Sofa Set",
+                        name: "Glass Tile Backsplash",
                         quantity: 1,
-                        marginDecimal: 0.18,
-                        unit: {
-                          connect: { id: pieceUnit.id },
-                        },
+                        marginDecimal: 0.15,
+                        unitId: sheetUnit.id,
                         lineItemOptions: {
                           create: [
                             {
-                              exactCostInDollarsPerUnit: 2000,
-                              priceAdjustmentDecimal: 0.08,
-                              description: "Luxury leather sofa set.",
+                              lowCostInDollarsPerUnit: 1000,
+                              highCostInDollarsPerUnit: 2000,
+                              priceAdjustmentDecimal: 0.1,
+                              description: "Premier glass tile backsplash.",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: true,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 1500,
+                              highCostInDollarsPerUnit: 2500,
+                              priceAdjustmentDecimal: 0.12,
+                              description:
+                                "Designer ceramic backsplash with custom designs.",
+                              productTier: {
+                                connect: { id: designerTier.id },
+                              },
+                              isSelected: false,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 2000,
+                              highCostInDollarsPerUnit: 3000,
+                              priceAdjustmentDecimal: 0.2,
+                              description:
+                                "Luxury tile backsplash with custom grout.",
                               productTier: {
                                 connect: { id: luxuryTier.id },
                               },
-                              isSelected: true,
+                              isSelected: false,
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        name: "Ceramic Backsplash",
+                        quantity: 1,
+                        marginDecimal: 0.18,
+                        unitId: sheetUnit.id,
+                        lineItemOptions: {
+                          create: [
+                            {
+                              lowCostInDollarsPerUnit: 1000,
+                              highCostInDollarsPerUnit: 2000,
+                              priceAdjustmentDecimal: 0.1,
+                              description:
+                                "Premier ceramic tile backsplash with modern design.",
+                              productTier: {
+                                connect: { id: premierTier.id },
+                              },
+                              isSelected: false,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 1000,
+                              highCostInDollarsPerUnit: 2000,
+                              priceAdjustmentDecimal: 0.1,
+                              description:
+                                "Designer ceramic tile backsplash with modern design.",
+                              productTier: {
+                                connect: { id: designerTier.id },
+                              },
+                              isSelected: false,
+                            },
+                            {
+                              lowCostInDollarsPerUnit: 1000,
+                              highCostInDollarsPerUnit: 2000,
+                              priceAdjustmentDecimal: 0.1,
+                              description:
+                                "Luxury ceramic tile backsplash with modern design.",
+                              productTier: {
+                                connect: { id: luxuryTier.id },
+                              },
+                              isSelected: false,
                             },
                           ],
                         },
