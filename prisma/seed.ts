@@ -4,24 +4,24 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Create Product Tiers
-  const premierTier = await prisma.productTier.create({
+  const premierTier = await prisma.optionTier.create({
     data: {
       tierLevel: 1,
-      label: "Premier",
+      name: "Premier",
     },
   });
 
-  const designerTier = await prisma.productTier.create({
+  const designerTier = await prisma.optionTier.create({
     data: {
       tierLevel: 2,
-      label: "Designer",
+      name: "Designer",
     },
   });
 
-  const luxuryTier = await prisma.productTier.create({
+  const luxuryTier = await prisma.optionTier.create({
     data: {
       tierLevel: 3,
-      label: "Luxury",
+      name: "Luxury",
     },
   });
 
@@ -57,15 +57,9 @@ async function main() {
     },
   });
 
-  const servicesCategory = await prisma.groupCategory.create({
+  const laborCategory = await prisma.groupCategory.create({
     data: {
-      name: "Services",
-    },
-  });
-
-  const administrativeCategory = await prisma.groupCategory.create({
-    data: {
-      name: "Administrative",
+      name: "Labor",
     },
   });
 
@@ -114,13 +108,13 @@ async function main() {
       areas: {
         create: [
           {
-            name: "Kitchen",
+            name: "Kitchen Remodel",
             lineItemGroups: {
               create: [
                 {
                   name: "Permits",
                   groupCategory: {
-                    connect: { id: administrativeCategory.id },
+                    connect: { id: laborCategory.id },
                   },
                   lineItems: {
                     create: [
@@ -129,6 +123,7 @@ async function main() {
                         quantity: 1,
                         marginDecimal: 0.2,
                         unitId: piecesUnit.id,
+                        indexInGroup: 0,
                         lineItemOptions: {
                           create: [
                             {
@@ -136,7 +131,7 @@ async function main() {
                               highCostInDollarsPerUnit: 5000,
                               priceAdjustmentDecimal: 0.15,
                               description: "Basic Permit",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: premierTier.id },
                               },
                               isSelected: true,
@@ -149,6 +144,7 @@ async function main() {
                         quantity: 5,
                         marginDecimal: 0.18,
                         unitId: piecesUnit.id,
+                        indexInGroup: 1,
                         lineItemOptions: {
                           create: [
                             {
@@ -156,7 +152,7 @@ async function main() {
                               highCostInDollarsPerUnit: 3000,
                               priceAdjustmentDecimal: 0.12,
                               description: "Basic Permit for Plumbing",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: premierTier.id },
                               },
                               isSelected: true,
@@ -170,7 +166,7 @@ async function main() {
                 {
                   name: "Project Management",
                   groupCategory: {
-                    connect: { id: administrativeCategory.id },
+                    connect: { id: laborCategory.id },
                   },
                   lineItems: {
                     create: [
@@ -179,6 +175,7 @@ async function main() {
                         quantity: 1,
                         marginDecimal: 0.2,
                         unitId: piecesUnit.id,
+                        indexInGroup: 0,
                         lineItemOptions: {
                           create: [
                             {
@@ -186,28 +183,28 @@ async function main() {
                               highCostInDollarsPerUnit: 5000,
                               priceAdjustmentDecimal: 0.15,
                               description: "Premier Management",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: premierTier.id },
                               },
                               isSelected: true,
                             },
                             {
-                              lowCostInDollarsPerUnit: 3000,
-                              highCostInDollarsPerUnit: 5000,
+                              lowCostInDollarsPerUnit: 4000,
+                              highCostInDollarsPerUnit: 6000,
                               priceAdjustmentDecimal: 0.15,
                               description: "Designer Management",
-                              productTier: {
-                                connect: { id: premierTier.id },
+                              optionTier: {
+                                connect: { id: designerTier.id },
                               },
                               isSelected: true,
                             },
                             {
-                              lowCostInDollarsPerUnit: 3000,
-                              highCostInDollarsPerUnit: 5000,
+                              lowCostInDollarsPerUnit: 6000,
+                              highCostInDollarsPerUnit: 10000,
                               priceAdjustmentDecimal: 0.15,
                               description: "Luxury Management",
-                              productTier: {
-                                connect: { id: premierTier.id },
+                              optionTier: {
+                                connect: { id: luxuryTier.id },
                               },
                               isSelected: true,
                             },
@@ -229,6 +226,7 @@ async function main() {
                         quantity: 10,
                         marginDecimal: 0.2,
                         unitId: piecesUnit.id,
+                        indexInGroup: 0,
                         lineItemOptions: {
                           create: [
                             {
@@ -237,7 +235,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.15,
                               description:
                                 "Premier custom cabinets with wood finish.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: premierTier.id },
                               },
                               isSelected: true,
@@ -248,7 +246,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.1,
                               description:
                                 "Luxury cabinets with custom hardware.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: luxuryTier.id },
                               },
                               isSelected: false,
@@ -259,7 +257,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.12,
                               description:
                                 "Designer cabinets with modern handles.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: designerTier.id },
                               },
                               isSelected: false,
@@ -272,6 +270,7 @@ async function main() {
                         quantity: 5,
                         marginDecimal: 0.18,
                         unitId: piecesUnit.id,
+                        indexInGroup: 1,
                         lineItemOptions: {
                           create: [
                             {
@@ -280,7 +279,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.12,
                               description:
                                 "Premier cabinet shelves with reinforced wood.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: premierTier.id },
                               },
                               isSelected: true,
@@ -290,7 +289,7 @@ async function main() {
                               highCostInDollarsPerUnit: 3500,
                               priceAdjustmentDecimal: 0.1,
                               description: "Luxury reinforced shelves.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: luxuryTier.id },
                               },
                               isSelected: false,
@@ -300,7 +299,7 @@ async function main() {
                               highCostInDollarsPerUnit: 3500,
                               priceAdjustmentDecimal: 0.1,
                               description: "designer reinforced shelves.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: designerTier.id },
                               },
                               isSelected: false,
@@ -323,6 +322,7 @@ async function main() {
                         quantity: 1,
                         marginDecimal: 0.2,
                         unitId: slabUnit.id,
+                        indexInGroup: 2,
                         lineItemOptions: {
                           create: [
                             {
@@ -331,7 +331,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.15,
                               description:
                                 "Luxury granite countertops with custom edges.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: luxuryTier.id },
                               },
                               isSelected: true,
@@ -342,7 +342,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.1,
                               description:
                                 "Premier quartz countertops with polished finish.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: premierTier.id },
                               },
                               isSelected: false,
@@ -353,7 +353,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.12,
                               description:
                                 "Designer marble countertops with custom patterns.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: designerTier.id },
                               },
                               isSelected: false,
@@ -366,6 +366,7 @@ async function main() {
                         quantity: 1,
                         marginDecimal: 0.22,
                         unitId: slabUnit.id,
+                        indexInGroup: 3,
                         lineItemOptions: {
                           create: [
                             {
@@ -373,7 +374,7 @@ async function main() {
                               highCostInDollarsPerUnit: 8000,
                               priceAdjustmentDecimal: 0.2,
                               description: "Luxury quartz countertops.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: luxuryTier.id },
                               },
                               isSelected: false,
@@ -383,7 +384,7 @@ async function main() {
                               highCostInDollarsPerUnit: 7000,
                               priceAdjustmentDecimal: 0.15,
                               description: "Premier quartz with patterns.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: premierTier.id },
                               },
                               isSelected: true,
@@ -393,7 +394,7 @@ async function main() {
                               highCostInDollarsPerUnit: 7000,
                               priceAdjustmentDecimal: 0.15,
                               description: "designer quartz with patterns.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: designerTier.id },
                               },
                               isSelected: true,
@@ -416,6 +417,7 @@ async function main() {
                         quantity: 1,
                         marginDecimal: 0.15,
                         unitId: sheetUnit.id,
+                        indexInGroup: 4,
                         lineItemOptions: {
                           create: [
                             {
@@ -423,7 +425,7 @@ async function main() {
                               highCostInDollarsPerUnit: 2000,
                               priceAdjustmentDecimal: 0.1,
                               description: "Premier glass tile backsplash.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: premierTier.id },
                               },
                               isSelected: true,
@@ -434,7 +436,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.12,
                               description:
                                 "Designer ceramic backsplash with custom designs.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: designerTier.id },
                               },
                               isSelected: false,
@@ -445,7 +447,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.2,
                               description:
                                 "Luxury tile backsplash with custom grout.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: luxuryTier.id },
                               },
                               isSelected: false,
@@ -458,6 +460,7 @@ async function main() {
                         quantity: 1,
                         marginDecimal: 0.18,
                         unitId: sheetUnit.id,
+                        indexInGroup: 5,
                         lineItemOptions: {
                           create: [
                             {
@@ -466,7 +469,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.1,
                               description:
                                 "Premier ceramic tile backsplash with modern design.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: premierTier.id },
                               },
                               isSelected: false,
@@ -477,7 +480,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.1,
                               description:
                                 "Designer ceramic tile backsplash with modern design.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: designerTier.id },
                               },
                               isSelected: false,
@@ -488,7 +491,7 @@ async function main() {
                               priceAdjustmentDecimal: 0.1,
                               description:
                                 "Luxury ceramic tile backsplash with modern design.",
-                              productTier: {
+                              optionTier: {
                                 connect: { id: luxuryTier.id },
                               },
                               isSelected: false,
@@ -506,7 +509,6 @@ async function main() {
       },
     },
   });
-
   console.log("Seeding completed!");
 }
 

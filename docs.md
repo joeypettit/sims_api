@@ -21,3 +21,8 @@ npx prisma db push
 This command updates your database schema to match your Prisma schema and regenerates the Prisma Client.
 Learn more about prisma db push
 Choose the method that best fits your workflow. If you are in the early stages of development or prototyping, prisma db push might be more convenient. For production environments or when you need to track changes, prisma migrate dev is recommended.
+
+# IN DEV ONLY
+
+`npx prisma db push --force-reset` to reset to current schema without migration, dropping all data.
+`npx prisma db seed` to reseed the db after resetting

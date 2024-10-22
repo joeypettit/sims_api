@@ -56,6 +56,7 @@ model LineItem {
   unitId          String
   marginDecimal   Float
   unit            LineItemUnit     @relation(fields: [unitId], references: [id])
+  indexInGroup    Int
   lineItemOptions LineItemOption[]
   lineItemGroupId String
   lineItemGroup   LineItemGroup    @relation(fields: [lineItemGroupId], references: [id])
@@ -68,17 +69,17 @@ model LineItemUnit {
 }
 
 model LineItemOption {
-  id                        String      @id @default(uuid())
+  id                        String     @id @default(uuid())
   lowCostInDollarsPerUnit   Float?
   highCostInDollarsPerUnit  Float?
   exactCostInDollarsPerUnit Float?
   priceAdjustmentDecimal    Float
   description               String
-  productTierId             String
-  productTier               ProductTier @relation(fields: [productTierId], references: [id])
+  optionTierId              String
+  optionTier                OptionTier @relation(fields: [optionTierId], references: [id])
   isSelected                Boolean
   lineItemId                String
-  lineItem                  LineItem    @relation(fields: [lineItemId], references: [id])
+  lineItem                  LineItem   @relation(fields: [lineItemId], references: [id])
 }
 
 model LineItemGroup {
@@ -97,9 +98,9 @@ model GroupCategory {
   LineItemGroup LineItemGroup[]
 }
 
-model ProductTier {
+model OptionTier {
   id             String           @id @default(uuid())
   tierLevel      Int
-  label          String
+  name           String
   lineItemOption LineItemOption[]
 }

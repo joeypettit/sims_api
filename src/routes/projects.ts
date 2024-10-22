@@ -1,5 +1,4 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 const router = express.Router();
 import prisma from "../../prisma/prisma-client";
 import sortProjectAreasByGroup from "../utility/project-sort";
@@ -71,22 +70,28 @@ router.get("/area/:areaId", async (req, res) => {
                   highCostInDollarsPerUnit: true,
                   isSelected: true,
                   priceAdjustmentDecimal: true,
-                  productTier: {
+                  optionTier: {
                     select: {
-                      label: true,
+                      name: true,
+                      tierLevel: true,
                     },
                   },
                 },
+                orderBy: {
+                  optionTier: {
+                    tierLevel: "asc",
+                  },
+                },
               },
+            },
+            orderBy: {
+              indexInGroup: "asc",
             },
           },
         },
       },
     },
   });
-  // sortProjectAreasByGroup(result);
-
-  console.log("results:", result);
   res.send(result);
 });
 
