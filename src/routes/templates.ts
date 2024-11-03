@@ -2,25 +2,107 @@ import express from "express";
 const router = express.Router();
 import prisma from "../../prisma/prisma-client";
 import { simulateNetworkLatency } from "../util";
+import { ProjectArea } from "@prisma/client";
+import { AreaTemplate } from "@prisma/client";
 
-router.post("/area/create", async (req, res) => {
-  const { name } = req.body;
+router.get("/area/:templateId", async (req, res) => {
+  const { templateId } = req.params;
+  let template: AreaTemplate | null = null;
   try {
-    const newTemplate = await prisma.template.create({
-      data: {
-        name,
+    template = await prisma.areaTemplate.findUnique({
+      where: {
+        id: templateId,
+      },
+      select: {
+        id: true,
+        name: true,
+        projectAreaId: true,
+        projectArea: {
+          select: {
+            id: true,
+            name: true,
+            lineItemGroups: {
+              select: {
+                name: true,
+                groupCategory: true,
+                lineItems: {
+                  select: {
+                    id: true,
+                    marginDecimal: true,
+                    quantity: true,
+                    name: true,
+                    unit: true,
+                    lineItemGroup: {
+                      select: {
+                        groupCategory: true,
+                      },
+                    },
+                    lineItemOptions: {
+                      select: {
+                        id: true,
+                        description: true,
+                        exactCostInDollarsPerUnit: true,
+                        lowCostInDollarsPerUnit: true,
+                        highCostInDollarsPerUnit: true,
+                        isSelected: true,
+                        priceAdjustmentDecimal: true,
+                        optionTier: {
+                          select: {
+                            name: true,
+                            tierLevel: true,
+                          },
+                        },
+                      },
+                      orderBy: {
+                        optionTier: {
+                          tierLevel: "asc",
+                        },
+                      },
+                    },
+                  },
+                  orderBy: {
+                    indexInGroup: "asc",
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
-
-    await simulateNetworkLatency(5000);
-
-    console.log("new template", newTemplate);
-
-    res.json(newTemplate);
   } catch (error) {
-    console.error("Error updating line item quantity:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.log("error getting template", error);
+    res.status(500).json({ error: error });
   }
+  if (template) {
+    res.json(template);
+  }
+});
+
+router.post("/area/create", async (req, res) => {
+  const { name, projectAreaId } = req.body;
+  let newArea: ProjectArea | undefined = undefined;
+  let newTemplate: AreaTemplate | undefined = undefined;
+  try {
+    newArea = await prisma.projectArea.create({ data: {} });
+  } catch (error) {
+    console.log("Error Creating Area For New Area Template");
+    res.status(500).json({ error: error });
+  }
+  if (newArea) {
+    try {
+      newTemplate = await prisma.areaTemplate.create({
+        data: {
+          name,
+          projectAreaId: newArea.id,
+        },
+      });
+    } catch (error) {
+      console.log("Error Creating Area Template");
+      res.status(500).json({ error: error });
+    }
+  }
+  res.json(newTemplate);
 });
 
 export default router;

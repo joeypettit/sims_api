@@ -43,10 +43,11 @@ model Project {
 
 model ProjectArea {
   id             String          @id @default(uuid())
-  name           String
-  projectId      String
-  project        Project         @relation(fields: [projectId], references: [id])
+  name           String?
+  projectId      String?
+  project        Project?         @relation(fields: [projectId], references: [id])
   lineItemGroups LineItemGroup[]
+  template        AreaTemplate?  
 }
 
 model LineItem {
@@ -103,4 +104,11 @@ model OptionTier {
   tierLevel      Int
   name           String
   lineItemOption LineItemOption[]
+}
+
+model AreaTemplate {
+  id            String            @id @default(uuid())
+  name          String
+  projectAreaId String            @unique
+  projectArea   ProjectArea       @relation(fields: [projectAreaId], references: [id])
 }

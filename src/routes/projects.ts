@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 import prisma from "../../prisma/prisma-client";
 import sortProjectAreasByGroup from "../utility/project-sort";
+import { simulateNetworkLatency } from "../util";
 
 // define the home page route
 router.get("/", async (req, res) => {
@@ -38,6 +39,7 @@ router.get("/:projectId", async (req, res) => {
 
 router.get("/area/:areaId", async (req, res) => {
   const { areaId } = req.params;
+  await simulateNetworkLatency(5000);
   const result = await prisma.projectArea.findUnique({
     where: {
       id: areaId,
