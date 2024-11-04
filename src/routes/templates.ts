@@ -23,6 +23,7 @@ router.get("/area/:templateId", async (req, res) => {
             name: true,
             lineItemGroups: {
               select: {
+                id: true,
                 name: true,
                 groupCategory: true,
                 lineItems: {

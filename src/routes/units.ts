@@ -10,7 +10,6 @@ router.get("/", async (req, res) => {
         name: true,
       },
     });
-    console.log("Units", result);
     res.status(200).send(result);
   } catch (error) {
     console.error("Error fetching units:", error);
