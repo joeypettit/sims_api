@@ -45,18 +45,18 @@ model ProjectArea {
   id             String          @id @default(uuid())
   name           String?
   projectId      String?
-  project        Project?         @relation(fields: [projectId], references: [id])
+  project        Project?        @relation(fields: [projectId], references: [id])
   lineItemGroups LineItemGroup[]
-  template        AreaTemplate?  
+  template       AreaTemplate?
 }
 
 model LineItem {
   id              String           @id @default(uuid())
   name            String
   quantity        Float
-  unitId          String
+  unitId          String?
   marginDecimal   Float
-  unit            LineItemUnit     @relation(fields: [unitId], references: [id])
+  unit            LineItemUnit?    @relation(fields: [unitId], references: [id])
   indexInGroup    Int
   lineItemOptions LineItemOption[]
   lineItemGroupId String
@@ -70,17 +70,17 @@ model LineItemUnit {
 }
 
 model LineItemOption {
-  id                        String     @id @default(uuid())
+  id                        String      @id @default(uuid())
   lowCostInDollarsPerUnit   Float?
   highCostInDollarsPerUnit  Float?
   exactCostInDollarsPerUnit Float?
   priceAdjustmentDecimal    Float
   description               String
-  optionTierId              String
-  optionTier                OptionTier @relation(fields: [optionTierId], references: [id])
+  optionTierId              String?
+  optionTier                OptionTier? @relation(fields: [optionTierId], references: [id])
   isSelected                Boolean
   lineItemId                String
-  lineItem                  LineItem   @relation(fields: [lineItemId], references: [id])
+  lineItem                  LineItem    @relation(fields: [lineItemId], references: [id])
 }
 
 model LineItemGroup {
@@ -107,8 +107,8 @@ model OptionTier {
 }
 
 model AreaTemplate {
-  id            String            @id @default(uuid())
+  id            String      @id @default(uuid())
   name          String
-  projectAreaId String            @unique
-  projectArea   ProjectArea       @relation(fields: [projectAreaId], references: [id])
+  projectAreaId String      @unique
+  projectArea   ProjectArea @relation(fields: [projectAreaId], references: [id])
 }

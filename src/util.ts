@@ -5,3 +5,9 @@ export function simulateNetworkLatency(delay = 2000) {
     }, delay);
   });
 }
+
+export function removeKeysWhereUndefined(obj: Object) {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, value]) => value !== undefined)
+  );
+}

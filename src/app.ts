@@ -4,6 +4,7 @@ import lineItemsRoutes from "./routes/line-items";
 import groupRoutes from "./routes/groups";
 import templatesRoutes from "./routes/templates";
 import unitsRoutes from "./routes/units";
+import optionsRoutes from "./routes/options";
 
 const app = express();
 const port = 3000;
@@ -14,6 +15,7 @@ app.use("/api/line-items", lineItemsRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/templates", templatesRoutes);
 app.use("/api/units", unitsRoutes);
+app.use("/api/options", optionsRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
