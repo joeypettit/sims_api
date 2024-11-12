@@ -5,7 +5,7 @@ import prisma from "../../prisma/prisma-client";
 type UpdateParams = {
   optionId: string;
   description?: string;
-  priceAdjustmentDecimal?: number;
+  priceAdjustmentMultiplier?: number;
   exactCostInDollarsPerUnit?: number | null;
   highCostInDollarsPerUnit?: number | null;
   lowCostInDollarsPerUnit?: number | null;
@@ -17,7 +17,7 @@ export class OptionsService {
   async update({
     optionId,
     description,
-    priceAdjustmentDecimal,
+    priceAdjustmentMultiplier,
     exactCostInDollarsPerUnit,
     highCostInDollarsPerUnit,
     lowCostInDollarsPerUnit,
@@ -26,7 +26,7 @@ export class OptionsService {
   }: UpdateParams) {
     let dataObj: any = {
       description,
-      priceAdjustmentDecimal,
+      priceAdjustmentMultiplier,
       exactCostInDollarsPerUnit,
       highCostInDollarsPerUnit,
       lowCostInDollarsPerUnit,

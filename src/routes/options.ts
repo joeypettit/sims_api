@@ -33,7 +33,7 @@ router.get("/:optionId", async (req, res) => {
 router.put("/:optionId", async (req, res) => {
   const {
     description,
-    priceAdjustmentDecimal,
+    priceAdjustmentMultiplier,
     exactCostInDollarsPerUnit,
     highCostInDollarsPerUnit,
     lowCostInDollarsPerUnit,
@@ -48,7 +48,7 @@ router.put("/:optionId", async (req, res) => {
       exactCostInDollarsPerUnit,
       highCostInDollarsPerUnit,
       lowCostInDollarsPerUnit,
-      priceAdjustmentDecimal,
+      priceAdjustmentMultiplier,
       isSelected,
       optionTierId,
     });

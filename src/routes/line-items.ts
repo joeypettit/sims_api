@@ -38,7 +38,7 @@ router.get("/:lineItemId", async (req, res) => {
             lowCostInDollarsPerUnit: true,
             isSelected: true,
             optionTier: true,
-            priceAdjustmentDecimal: true,
+            priceAdjustmentMultiplier: true,
           },
         },
       },
@@ -106,7 +106,7 @@ router.post("/create-blank", async (req, res) => {
           create: [
             {
               description: "",
-              priceAdjustmentDecimal: 0,
+              priceAdjustmentMultiplier: 1,
               exactCostInDollarsPerUnit: null,
               highCostInDollarsPerUnit: 0,
               lowCostInDollarsPerUnit: 0,
@@ -115,7 +115,7 @@ router.post("/create-blank", async (req, res) => {
             },
             {
               description: "",
-              priceAdjustmentDecimal: 0,
+              priceAdjustmentMultiplier: 1,
               exactCostInDollarsPerUnit: null,
               highCostInDollarsPerUnit: 0,
               lowCostInDollarsPerUnit: 0,
@@ -124,7 +124,7 @@ router.post("/create-blank", async (req, res) => {
             },
             {
               description: "",
-              priceAdjustmentDecimal: 0,
+              priceAdjustmentMultiplier: 1,
               exactCostInDollarsPerUnit: null,
               highCostInDollarsPerUnit: 0,
               lowCostInDollarsPerUnit: 0,
@@ -195,7 +195,7 @@ router.put("/:lineItemId", async (req, res) => {
         exactCostInDollarsPerUnit: option.exactCostInDollarsPerUnit,
         highCostInDollarsPerUnit: option.highCostInDollarsPerUnit,
         lowCostInDollarsPerUnit: option.lowCostInDollarsPerUnit,
-        priceAdjustmentDecimal: option.priceAdjustmentDecimal,
+        priceAdjustmentMultiplier: option.priceAdjustmentMultiplier,
         isSelected: option.isSelected,
         optionTierId: option.optionTier.id,
       });
@@ -289,6 +289,40 @@ router.put("/:lineItemId/unselect-option/:optionId", async (req, res) => {
   });
 
   res.send(result);
+});
+
+router.delete("/:lineItemId", async (req, res) => {
+  const lineItemId = req.params.lineItemId;
+
+  console.log("RUNNING");
+  try {
+    if (!lineItemId) {
+      res.status(400).json({ error: "Line item ID is required to delete." });
+      return;
+    }
+
+    const result = await prisma.lineItem.delete({
+      where: {
+        id: lineItemId,
+      },
+    });
+
+    console.log("DELETING: ", result);
+
+    // If no line item is found, return a 404
+    if (!result) {
+      res.status(404).json({ error: "Line item not found" });
+      return;
+    }
+
+    // Send the result if found
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error fetching line item:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching line item" });
+  }
 });
 
 export default router;

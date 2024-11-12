@@ -39,7 +39,6 @@ router.get("/:projectId", async (req, res) => {
 
 router.get("/area/:areaId", async (req, res) => {
   const { areaId } = req.params;
-  await simulateNetworkLatency(5000);
   const result = await prisma.projectArea.findUnique({
     where: {
       id: areaId,
@@ -49,6 +48,7 @@ router.get("/area/:areaId", async (req, res) => {
       name: true,
       lineItemGroups: {
         select: {
+          id: true,
           name: true,
           groupCategory: true,
           lineItems: {
@@ -71,7 +71,7 @@ router.get("/area/:areaId", async (req, res) => {
                   lowCostInDollarsPerUnit: true,
                   highCostInDollarsPerUnit: true,
                   isSelected: true,
-                  priceAdjustmentDecimal: true,
+                  priceAdjustmentMultiplier: true,
                   optionTier: {
                     select: {
                       name: true,

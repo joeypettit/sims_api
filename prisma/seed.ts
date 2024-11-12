@@ -129,7 +129,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 3000,
                               highCostInDollarsPerUnit: 5000,
-                              priceAdjustmentDecimal: 0.15,
+                              priceAdjustmentMultiplier: 0.15,
                               description: "Basic Permit",
                               optionTier: {
                                 connect: { id: premierTier.id },
@@ -150,7 +150,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 1500,
                               highCostInDollarsPerUnit: 3000,
-                              priceAdjustmentDecimal: 0.12,
+                              priceAdjustmentMultiplier: 0.12,
                               description: "Basic Permit for Plumbing",
                               optionTier: {
                                 connect: { id: premierTier.id },
@@ -181,7 +181,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 3000,
                               highCostInDollarsPerUnit: 5000,
-                              priceAdjustmentDecimal: 0.15,
+                              priceAdjustmentMultiplier: 0.15,
                               description: "Premier Management",
                               optionTier: {
                                 connect: { id: premierTier.id },
@@ -191,7 +191,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 4000,
                               highCostInDollarsPerUnit: 6000,
-                              priceAdjustmentDecimal: 0.15,
+                              priceAdjustmentMultiplier: 0.15,
                               description: "Designer Management",
                               optionTier: {
                                 connect: { id: designerTier.id },
@@ -201,7 +201,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 6000,
                               highCostInDollarsPerUnit: 10000,
-                              priceAdjustmentDecimal: 0.15,
+                              priceAdjustmentMultiplier: 0.15,
                               description: "Luxury Management",
                               optionTier: {
                                 connect: { id: luxuryTier.id },
@@ -232,7 +232,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 3000,
                               highCostInDollarsPerUnit: 5000,
-                              priceAdjustmentDecimal: 0.15,
+                              priceAdjustmentMultiplier: 0.15,
                               description:
                                 "Premier custom cabinets with wood finish.",
                               optionTier: {
@@ -243,7 +243,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 4000,
                               highCostInDollarsPerUnit: 6000,
-                              priceAdjustmentDecimal: 0.1,
+                              priceAdjustmentMultiplier: 0.1,
                               description:
                                 "Luxury cabinets with custom hardware.",
                               optionTier: {
@@ -254,7 +254,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 3500,
                               highCostInDollarsPerUnit: 4500,
-                              priceAdjustmentDecimal: 0.12,
+                              priceAdjustmentMultiplier: 0.12,
                               description:
                                 "Designer cabinets with modern handles.",
                               optionTier: {
@@ -276,7 +276,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 1500,
                               highCostInDollarsPerUnit: 3000,
-                              priceAdjustmentDecimal: 0.12,
+                              priceAdjustmentMultiplier: 0.12,
                               description:
                                 "Premier cabinet shelves with reinforced wood.",
                               optionTier: {
@@ -287,7 +287,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 2000,
                               highCostInDollarsPerUnit: 3500,
-                              priceAdjustmentDecimal: 0.1,
+                              priceAdjustmentMultiplier: 0.1,
                               description: "Luxury reinforced shelves.",
                               optionTier: {
                                 connect: { id: luxuryTier.id },
@@ -297,7 +297,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 2000,
                               highCostInDollarsPerUnit: 3500,
-                              priceAdjustmentDecimal: 0.1,
+                              priceAdjustmentMultiplier: 0.1,
                               description: "designer reinforced shelves.",
                               optionTier: {
                                 connect: { id: designerTier.id },
@@ -328,7 +328,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 3000,
                               highCostInDollarsPerUnit: 6000,
-                              priceAdjustmentDecimal: 0.15,
+                              priceAdjustmentMultiplier: 0.15,
                               description:
                                 "Luxury granite countertops with custom edges.",
                               optionTier: {
@@ -339,7 +339,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 4500,
                               highCostInDollarsPerUnit: 7000,
-                              priceAdjustmentDecimal: 0.1,
+                              priceAdjustmentMultiplier: 0.1,
                               description:
                                 "Premier quartz countertops with polished finish.",
                               optionTier: {
@@ -350,7 +350,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 4000,
                               highCostInDollarsPerUnit: 6000,
-                              priceAdjustmentDecimal: 0.12,
+                              priceAdjustmentMultiplier: 0.12,
                               description:
                                 "Designer marble countertops with custom patterns.",
                               optionTier: {
@@ -372,7 +372,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 5000,
                               highCostInDollarsPerUnit: 8000,
-                              priceAdjustmentDecimal: 0.2,
+                              priceAdjustmentMultiplier: 0.2,
                               description: "Luxury quartz countertops.",
                               optionTier: {
                                 connect: { id: luxuryTier.id },
@@ -382,7 +382,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 4000,
                               highCostInDollarsPerUnit: 7000,
-                              priceAdjustmentDecimal: 0.15,
+                              priceAdjustmentMultiplier: 0.15,
                               description: "Premier quartz with patterns.",
                               optionTier: {
                                 connect: { id: premierTier.id },
@@ -392,7 +392,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 4000,
                               highCostInDollarsPerUnit: 7000,
-                              priceAdjustmentDecimal: 0.15,
+                              priceAdjustmentMultiplier: 0.15,
                               description: "designer quartz with patterns.",
                               optionTier: {
                                 connect: { id: designerTier.id },
@@ -423,7 +423,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 1000,
                               highCostInDollarsPerUnit: 2000,
-                              priceAdjustmentDecimal: 0.1,
+                              priceAdjustmentMultiplier: 0.1,
                               description: "Premier glass tile backsplash.",
                               optionTier: {
                                 connect: { id: premierTier.id },
@@ -433,7 +433,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 1500,
                               highCostInDollarsPerUnit: 2500,
-                              priceAdjustmentDecimal: 0.12,
+                              priceAdjustmentMultiplier: 0.12,
                               description:
                                 "Designer ceramic backsplash with custom designs.",
                               optionTier: {
@@ -444,7 +444,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 2000,
                               highCostInDollarsPerUnit: 3000,
-                              priceAdjustmentDecimal: 0.2,
+                              priceAdjustmentMultiplier: 0.2,
                               description:
                                 "Luxury tile backsplash with custom grout.",
                               optionTier: {
@@ -466,7 +466,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 1000,
                               highCostInDollarsPerUnit: 2000,
-                              priceAdjustmentDecimal: 0.1,
+                              priceAdjustmentMultiplier: 0.1,
                               description:
                                 "Premier ceramic tile backsplash with modern design.",
                               optionTier: {
@@ -477,7 +477,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 1000,
                               highCostInDollarsPerUnit: 2000,
-                              priceAdjustmentDecimal: 0.1,
+                              priceAdjustmentMultiplier: 0.1,
                               description:
                                 "Designer ceramic tile backsplash with modern design.",
                               optionTier: {
@@ -488,7 +488,7 @@ async function main() {
                             {
                               lowCostInDollarsPerUnit: 1000,
                               highCostInDollarsPerUnit: 2000,
-                              priceAdjustmentDecimal: 0.1,
+                              priceAdjustmentMultiplier: 0.1,
                               description:
                                 "Luxury ceramic tile backsplash with modern design.",
                               optionTier: {

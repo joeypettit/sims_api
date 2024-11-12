@@ -74,13 +74,13 @@ model LineItemOption {
   lowCostInDollarsPerUnit   Float?
   highCostInDollarsPerUnit  Float?
   exactCostInDollarsPerUnit Float?
-  priceAdjustmentDecimal    Float
+  priceAdjustmentMultiplier Float       @default(1)
   description               String
   optionTierId              String?
   optionTier                OptionTier? @relation(fields: [optionTierId], references: [id])
   isSelected                Boolean
   lineItemId                String
-  lineItem                  LineItem    @relation(fields: [lineItemId], references: [id])
+  lineItem                  LineItem    @relation(fields: [lineItemId], references: [id], onDelete: Cascade)
 }
 
 model LineItemGroup {

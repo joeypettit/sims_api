@@ -46,7 +46,7 @@ router.get("/area/:templateId", async (req, res) => {
                         lowCostInDollarsPerUnit: true,
                         highCostInDollarsPerUnit: true,
                         isSelected: true,
-                        priceAdjustmentDecimal: true,
+                        priceAdjustmentMultiplier: true,
                         optionTier: {
                           select: {
                             name: true,
