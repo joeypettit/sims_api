@@ -124,5 +124,4 @@ router.post("/area/create", async (req, res) => {
   }
   res.json(newTemplate);
 });
-
 export default router;
