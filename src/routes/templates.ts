@@ -5,6 +5,25 @@ import { simulateNetworkLatency } from "../util";
 import { ProjectArea } from "@prisma/client";
 import { AreaTemplate } from "@prisma/client";
 
+router.get("/area/all-templates", async (req, res) => {
+  let templates: AreaTemplate[] | null = null;
+  try {
+    templates = await prisma.areaTemplate.findMany({
+      select: {
+        id: true,
+        name: true,
+        projectAreaId: true,
+      },
+    });
+  } catch (error) {
+    console.log("error getting all templates", error);
+    res.status(500).json({ error: error });
+  }
+  if (templates) {
+    res.json(templates);
+  }
+});
+
 router.get("/area/:templateId", async (req, res) => {
   const { templateId } = req.params;
   let template: AreaTemplate | null = null;

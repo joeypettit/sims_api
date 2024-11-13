@@ -4,6 +4,7 @@ import prisma from "../../prisma/prisma-client";
 import type { LineItemOption, OptionTier } from "@prisma/client";
 import { removeKeysWhereUndefined } from "../util";
 import { OptionsService } from "../services/options-services";
+import { simulateNetworkLatency } from "../util";
 
 const optionsService = new OptionsService();
 
@@ -293,8 +294,6 @@ router.put("/:lineItemId/unselect-option/:optionId", async (req, res) => {
 
 router.delete("/:lineItemId", async (req, res) => {
   const lineItemId = req.params.lineItemId;
-
-  console.log("RUNNING");
   try {
     if (!lineItemId) {
       res.status(400).json({ error: "Line item ID is required to delete." });
@@ -307,9 +306,6 @@ router.delete("/:lineItemId", async (req, res) => {
       },
     });
 
-    console.log("DELETING: ", result);
-
-    // If no line item is found, return a 404
     if (!result) {
       res.status(404).json({ error: "Line item not found" });
       return;
