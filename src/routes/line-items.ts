@@ -9,7 +9,6 @@ import { simulateNetworkLatency } from "../util";
 const optionsService = new OptionsService();
 
 router.get("/:lineItemId", async (req, res) => {
-  console.log("Getting line item");
   const lineItemId = req.params.lineItemId;
 
   try {
@@ -45,6 +44,8 @@ router.get("/:lineItemId", async (req, res) => {
       },
     });
 
+    console.log("getting line item", lineItemId, result?.name);
+
     // If no line item is found, return a 404
     if (!result) {
       res.status(404).json({ error: "Line item not found" });
@@ -63,7 +64,6 @@ router.get("/:lineItemId", async (req, res) => {
 
 router.post("/create-blank", async (req, res) => {
   const { groupId } = req.body;
-  console.log("creating blank", groupId);
 
   let lastIndex = 0;
   let optionTiers: OptionTier[] = [];
@@ -182,11 +182,7 @@ router.put("/:lineItemId", async (req, res) => {
       connect: { id: unitId },
     };
   }
-  console.log("data obj", lineDataObj);
   lineDataObj = removeKeysWhereUndefined(lineDataObj);
-  console.log("cleaned DATA OBJ", lineDataObj);
-
-  console.log("LINE ITEM OPTIONS", lineItemOptions);
 
   await lineItemOptions.map(async (option: any) => {
     try {
@@ -201,7 +197,7 @@ router.put("/:lineItemId", async (req, res) => {
         optionTierId: option.optionTier.id,
       });
     } catch (error) {
-      console.log(`Error updating Option with id: ${option.id}`);
+      console.error(`Error updating Option with id: ${option.id}`);
       res.status(500).json({
         error: `An error occurred while updating the line item option with id ${option.id}`,
       });
@@ -252,8 +248,6 @@ router.put("/:lineItemId/select-option/:optionId", async (req, res) => {
 router.put("/:lineItemId/update-quantity", async (req, res) => {
   const { lineItemId } = req.params;
   const { quantity } = req.body;
-
-  console.log("updating q", quantity, lineItemId);
 
   if (quantity == null || typeof quantity !== "number" || quantity < 0) {
     res.status(400).json({ error: "Invalid quantity" });

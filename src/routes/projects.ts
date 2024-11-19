@@ -19,7 +19,6 @@ router.get("/", async (req, res) => {
 
 // define the about route
 router.get("/:projectId", async (req, res) => {
-  console.log("getting project");
   const projectId = req.params.projectId;
   const result = await prisma.project.findUnique({
     where: {
@@ -160,9 +159,7 @@ router.put("/:projectId", async (req, res) => {
       },
     };
   }
-  console.log("data obj", projectDataObj);
   projectDataObj = removeKeysWhereUndefined(projectDataObj);
-  console.log("cleaned DATA OBJ", projectDataObj);
 
   try {
     const updatedLineItem = await prisma.project.update({

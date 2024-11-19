@@ -35,9 +35,7 @@ export class OptionsService {
     if (optionTierId) {
       dataObj.optionTier = { connect: { id: optionTierId } };
     }
-    console.log("option data", dataObj);
     dataObj = removeKeysWhereUndefined(dataObj);
-    console.log("clean option data", dataObj);
 
     try {
       const updatedOption = await prisma.lineItemOption.update({

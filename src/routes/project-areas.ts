@@ -5,7 +5,6 @@ const projectAreaService = new ProjectAreaService();
 
 router.post("/create-blank", async (req, res) => {
   const { name, projectId } = req.body;
-  console.log("creating blank", name, projectId);
 
   if (!projectId) {
     res.status(400).json({
@@ -28,7 +27,6 @@ router.post("/create-blank", async (req, res) => {
 
 router.post("/create-from-template", async (req, res) => {
   const { name, projectId, templateId } = req.body;
-  console.log("creating from template", name, projectId, templateId);
 
   if (!projectId || !templateId) {
     res.status(400).json({
