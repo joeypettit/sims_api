@@ -49,6 +49,7 @@ router.get("/area/:areaId", async (req, res) => {
         select: {
           id: true,
           name: true,
+          isOpen: true,
           groupCategory: true,
           lineItems: {
             select: {

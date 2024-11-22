@@ -91,6 +91,7 @@ model LineItemGroup {
   groupCategoryId String
   groupCategory   GroupCategory @relation(fields: [groupCategoryId], references: [id])
   lineItems       LineItem[]
+  isOpen          Boolean       @default(false)
 }
 
 model GroupCategory {

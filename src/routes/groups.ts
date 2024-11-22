@@ -55,4 +55,21 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.put("/:groupId/update-isopen", async (req, res) => {
+  const { groupId } = req.params;
+  const { isOpen } = req.body;
+
+  const result = await prisma.lineItemGroup.update({
+    where: {
+      id: groupId,
+    },
+    data: {
+      isOpen: isOpen,
+    },
+  });
+
+  res.send(result);
+});
+
+
 export default router;
