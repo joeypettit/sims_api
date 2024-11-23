@@ -2,6 +2,9 @@ import express from "express";
 const router = express.Router();
 import prisma from "../../prisma/prisma-client";
 import type { GroupCategory } from "@prisma/client";
+import { GroupsService } from "../services/groups-service";
+
+const groupsService = new GroupsService()
 
 router.get("/all-categories", async (req, res) => {
   let result: GroupCategory[] | null = null;
@@ -72,4 +75,9 @@ router.put("/:groupId/update-isopen", async (req, res) => {
 });
 
 
+router.put("/update-isopen-by-area", async (req, res) => {
+  const { isOpen, areaId } = req.body;
+  const result = groupsService.setIsOpenOnAllGroupsInArea({ areaId, isOpen })
+  res.send(result);
+});
 export default router;

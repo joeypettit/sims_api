@@ -13,7 +13,7 @@ type CreateFromTemplateParams = {
   templateId: string;
 };
 
-export class ProjectAreaService {
+export class ProjectAreasService {
   async createBlank({ projectId, name }: CreateBlankParams) {
     try {
       const newArea = await prisma.projectArea.create({
