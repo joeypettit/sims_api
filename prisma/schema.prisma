@@ -57,7 +57,7 @@ model LineItem {
   unitId          String?
   marginDecimal   Float
   unit            LineItemUnit?    @relation(fields: [unitId], references: [id])
-  indexInGroup    Int
+  indexInGroup    Float            @default(0)
   lineItemOptions LineItemOption[]
   lineItemGroupId String
   lineItemGroup   LineItemGroup    @relation(fields: [lineItemGroupId], references: [id])
@@ -92,6 +92,7 @@ model LineItemGroup {
   groupCategory   GroupCategory @relation(fields: [groupCategoryId], references: [id])
   lineItems       LineItem[]
   isOpen          Boolean       @default(false)
+  indexInCategory Float         @default(0)
 }
 
 model GroupCategory {

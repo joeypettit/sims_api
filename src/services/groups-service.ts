@@ -5,15 +5,9 @@ type SetIsOpenOnAllGroupsInAreaParams = {
   areaId: string;
 };
 
-type CreateFromTemplateParams = {
-  name: string;
-  projectId: string;
-  templateId: string;
-};
 
 export class GroupsService {
   async setIsOpenOnAllGroupsInArea({ areaId, isOpen }: SetIsOpenOnAllGroupsInAreaParams) {
-    console.log("setIsOpenOnAllGroups", areaId, isOpen)
     try {
       const groups = await prisma.lineItemGroup.updateMany({
         where: {

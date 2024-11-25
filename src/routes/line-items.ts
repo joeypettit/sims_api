@@ -44,9 +44,6 @@ router.get("/:lineItemId", async (req, res) => {
       },
     });
 
-    console.log("getting line item", lineItemId, result?.name);
-
-    // If no line item is found, return a 404
     if (!result) {
       res.status(404).json({ error: "Line item not found" });
       return;
