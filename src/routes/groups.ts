@@ -21,7 +21,6 @@ router.get("/all-categories", async (req, res) => {
 router.post("/", async (req, res) => {
   const { categoryId, projectAreaId, groupName } = req.body;
 
-  // Input validation
   if (!categoryId || !projectAreaId || !groupName) {
     res
       .status(400)
@@ -30,25 +29,7 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    // Create a new LineItemGroup
-    const newGroup = await prisma.lineItemGroup.create({
-      data: {
-        name: groupName,
-        groupCategory: {
-          connect: { id: categoryId },
-        },
-        projectArea: {
-          connect: { id: projectAreaId },
-        },
-      },
-      select: {
-        id: true,
-        name: true,
-        projectAreaId: true,
-        groupCategoryId: true,
-      },
-    });
-
+    const newGroup = await groupsService.createGroup({ categoryId, groupName, projectAreaId })
     res.status(201).json(newGroup);
   } catch (error) {
     console.error("Error creating new group:", error);
