@@ -17,7 +17,6 @@ router.get("/", async (req, res) => {
   res.send(result);
 });
 
-// define the about route
 router.get("/:projectId", async (req, res) => {
   const projectId = req.params.projectId;
   const result = await prisma.project.findUnique({
@@ -49,7 +48,7 @@ router.get("/area/:areaId", async (req, res) => {
         select: {
           id: true,
           name: true,
-          isOpen: true,
+          indexInCategory: true,
           groupCategory: true,
           lineItems: {
             select: {

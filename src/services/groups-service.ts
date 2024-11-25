@@ -37,6 +37,7 @@ export class GroupsService {
       const newGroup = await prisma.lineItemGroup.create({
         data: {
           name: groupName,
+          indexInCategory: lastIndex + 1,
           groupCategory: {
             connect: { id: categoryId },
           },
@@ -62,6 +63,7 @@ export class GroupsService {
         `Error creating group on area with id: ${projectAreaId}`,
       );
     }
+
   }
   async setIsOpenOnAllGroupsInArea({ areaId, isOpen }: SetIsOpenOnAllGroupsInAreaParams) {
     try {
