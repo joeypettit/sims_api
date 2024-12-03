@@ -50,4 +50,19 @@ router.post("/create-from-template", async (req, res) => {
   }
 });
 
+
+router.get("/:areaId", async (req, res) => {
+  const { areaId } = req.params;
+  try {
+    const projectArea = await projectAreaService.getById({ areaId })
+    res.status(201).json(projectArea)
+  }
+  catch (error) {
+    console.error(`Error getting Project Area with id ${areaId}`, error);
+    res
+      .status(500)
+      .json({ error: "Error getting Project Area" });
+  }
+});
+
 export default router;

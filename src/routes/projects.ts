@@ -1,7 +1,6 @@
 import express from "express";
 const router = express.Router();
 import prisma from "../../prisma/prisma-client";
-import sortProjectAreasByGroup from "../utility/project-sort";
 import { removeKeysWhereUndefined, simulateNetworkLatency } from "../util";
 
 // define the home page route
@@ -34,68 +33,6 @@ router.get("/:projectId", async (req, res) => {
   });
   res.send(result);
 });
-
-router.get("/area/:areaId", async (req, res) => {
-  const { areaId } = req.params;
-  const result = await prisma.projectArea.findUnique({
-    where: {
-      id: areaId,
-    },
-    select: {
-      id: true,
-      name: true,
-      lineItemGroups: {
-        select: {
-          id: true,
-          name: true,
-          indexInCategory: true,
-          groupCategory: true,
-          lineItems: {
-            select: {
-              id: true,
-              marginDecimal: true,
-              quantity: true,
-              name: true,
-              unit: true,
-              lineItemGroup: {
-                select: {
-                  groupCategory: true,
-                },
-              },
-              lineItemOptions: {
-                select: {
-                  id: true,
-                  description: true,
-                  exactCostInDollarsPerUnit: true,
-                  lowCostInDollarsPerUnit: true,
-                  highCostInDollarsPerUnit: true,
-                  isSelected: true,
-                  priceAdjustmentMultiplier: true,
-                  optionTier: {
-                    select: {
-                      name: true,
-                      tierLevel: true,
-                    },
-                  },
-                },
-                orderBy: {
-                  optionTier: {
-                    tierLevel: "asc",
-                  },
-                },
-              },
-            },
-            orderBy: {
-              indexInGroup: "asc",
-            },
-          },
-        },
-      },
-    },
-  });
-  res.send(result);
-});
-
 router.post("/create-blank", async (req, res) => {
   const { name } = req.body;
   try {
