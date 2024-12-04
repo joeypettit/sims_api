@@ -1,8 +1,12 @@
 import { LineItemGroup, LineItemOption, ProjectArea } from "@prisma/client";
+import { GroupsService } from "./groups-service";
+import { UpdatedItem } from "../utility/project-sort";
 import { groupByValue, reindexEntitiesInArray } from "../utility/project-sort";
 import { removeKeysWhereUndefined } from "../util";
 import prisma from "../../prisma/prisma-client";
 import { ProjectAreaWithGroups } from "../../prisma/extended-types/project-area-types";
+
+const groupService = new GroupsService()
 
 type GetByIdParams = {
   areaId: string;
@@ -82,11 +86,13 @@ export class ProjectAreasService {
       });
       //
       //ensure the groups are indexed correctly  
-      this.ensureAreaGroupsAreCorrectlyIndexed(result)
-      return result;
+      const area = await this.ensureAreaGroupsAreCorrectlyIndexed(result)
+      console.log("area is", area)
+
+      return area;
     }
     catch (error) {
-      throw Error("Error creating")
+      throw Error(`Error getting area with id ${areaId}`)
     }
   }
 
@@ -182,6 +188,8 @@ export class ProjectAreasService {
 
       return newArea;
     } catch (error) {
+
+
       console.error(
         `Error creating new project area from template with ID ${templateId}:`,
         error
@@ -194,19 +202,36 @@ export class ProjectAreasService {
 
   async ensureAreaGroupsAreCorrectlyIndexed(area: ProjectAreaWithGroups) {
     const groupsGroupedByCategory = groupByValue(area.lineItemGroups, (item: LineItemGroup) => item.groupCategoryId)
-    const keys = Object.keys(groupsGroupedByCategory)
-    const groupsToUpdateIds: string[] = []
+    console.log("groups in category", groupsGroupedByCategory)
+    const categoryGroups = Object.keys(groupsGroupedByCategory)
+    const groupsToUpdate: UpdatedItem[] = []
+    const updatedGroups: LineItemGroup[] = []
 
-    keys.forEach((key) => {
+    categoryGroups.forEach((key) => {
       const groupsInCat = groupsGroupedByCategory[key]
-      const updatedIds = reindexEntitiesInArray({ arr: groupsInCat, indexKeyName: "indexInCategory" }).updatedItemIds;
-      groupsToUpdateIds.push(...updatedIds)
+      const updatedItems = reindexEntitiesInArray({ arr: groupsInCat, indexKeyName: "indexInCategory" }).updatedItemIds;
+      groupsToUpdate.push(...updatedItems)
     })
 
-    groupsToUpdateIds.forEach((id) => {
-      console.log("id is", id)
+    groupsToUpdate.forEach(async (group) => {
+      try {
+        await groupService.updateIndexInCategory({ groupId: group.itemId, indexInCategory: group.updatedIndex })
+      } catch (error) {
+        console.error(
+          `Error updating indexInCategory on group with id: ${group.itemId}:`,
+          error
+        );
+        throw new Error(
+          `Error updating indexInCategory on group: ${error}`
+        );
+      }
     })
 
-    return groupsGroupedByCategory;
+    for (const category in groupsGroupedByCategory) {
+      updatedGroups.push(...groupsGroupedByCategory[category])
+    }
+    area.lineItemGroups = updatedGroups;
+
+    return area;
   }
 }
