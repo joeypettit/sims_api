@@ -1,5 +1,7 @@
 import { LineItemGroup } from "@prisma/client";
 import prisma from "../../prisma/prisma-client";
+import { warn } from "console";
+import { wrap } from "module";
 
 type SetIsOpenOnAllGroupsInAreaParams = {
   isOpen: boolean;
@@ -12,8 +14,10 @@ type createGroupParams = {
   projectAreaId: string;
 };
 
-type normalizeGroupIndexesInCategoryParams = {
-  groups: LineItemGroup[]
+type SetGroupIndexInCategoryParams = {
+  groupId: string;
+  categoryId: string;
+  newIndex: number;
 }
 
 type updateIndexInCategoryParams = {
@@ -113,6 +117,78 @@ export class GroupsService {
       );
       throw Error(
         `Error setting all groups isOpen on area with id: ${areaId}`,
+      );
+    }
+  }
+
+  async setGroupIndexInCategory({ groupId, categoryId, newIndex }: SetGroupIndexInCategoryParams) {
+    try {
+      const movedGroup = await prisma.lineItemGroup.findFirst({
+        where: {
+          id: groupId
+        },
+      })
+      const groupsInCategory = await prisma.lineItemGroup.findMany({
+        where: {
+          projectAreaId: movedGroup?.projectAreaId,
+          groupCategory: {
+            id: movedGroup?.groupCategoryId
+          }
+        }
+      })
+
+      if (!movedGroup || !groupsInCategory) throw Error("Not groupId or correspoding groupsInCategory not found")
+      const oldIndex = movedGroup.indexInCategory;
+      if (oldIndex === newIndex) {
+        return movedGroup
+      }
+
+      const lowerIndex = Math.min(oldIndex, newIndex)
+      const higherIndex = Math.max(oldIndex, newIndex)
+      const groupsToUpdate: { id: string, updatedIndex: number }[] = []
+      groupsInCategory.map((group) => {
+        if (group.indexInCategory >= lowerIndex &&
+          group.indexInCategory <= higherIndex) {
+          if (group.id === groupId) {
+            groupsToUpdate.push({ id: group.id, updatedIndex: newIndex })
+            return { ...group, indexInCategory: newIndex }
+          }
+          const updatedIndex = (oldIndex < newIndex ? -1 : 1)
+          groupsToUpdate.push({ id: group.id, updatedIndex })
+
+          return {
+            ...group,
+            indexInCategory: group.indexInCategory + updatedIndex,
+          };
+        }
+        return group;
+      });
+
+      let updatedGroup: LineItemGroup | undefined = undefined;
+      groupsToUpdate.forEach(async (group) => {
+        const result = await prisma.lineItemGroup.update({
+          where: {
+            id: group.id
+          },
+          data: {
+            indexInCategory: group.updatedIndex
+          }
+        })
+        if (result.id === movedGroup.id) {
+          updatedGroup = result;
+        }
+      })
+
+
+
+      return updatedGroup;
+    } catch (error) {
+      console.error(
+        `Error setting group in index category: ${groupId}`,
+        error
+      );
+      throw Error(
+        `Error setting group in index category ${groupId}`,
       );
     }
   }

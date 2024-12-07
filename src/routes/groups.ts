@@ -21,6 +21,7 @@ router.get("/all-categories", async (req, res) => {
 router.post("/", async (req, res) => {
   const { categoryId, projectAreaId, groupName } = req.body;
 
+  // Input validation
   if (!categoryId || !projectAreaId || !groupName) {
     res
       .status(400)
@@ -58,7 +59,22 @@ router.put("/:groupId/update-isopen", async (req, res) => {
 
 router.put("/update-isopen-by-area", async (req, res) => {
   const { isOpen, areaId } = req.body;
-  const result = groupsService.setIsOpenOnAllGroupsInArea({ areaId, isOpen })
+  const result = await groupsService.setIsOpenOnAllGroupsInArea({ areaId, isOpen })
   res.send(result);
+})
+
+router.put("/:groupId/set-index-in-category", async (req, res) => {
+  const { groupId } = req.params;
+  const { categoryId, newIndex } = req.body;
+  try {
+    const result = await groupsService.setGroupIndexInCategory({ groupId, categoryId, newIndex })
+    res.send(result);
+  } catch (error) {
+    console.error("Error setting index in category:", error);
+    res
+      .status(500)
+      .json({ error: "Error setting index in category" });
+  }
 });
+
 export default router;

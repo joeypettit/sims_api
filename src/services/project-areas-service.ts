@@ -38,6 +38,7 @@ export class ProjectAreasService {
             select: {
               id: true,
               name: true,
+              isOpen: true,
               indexInCategory: true,
               groupCategoryId: true,
               groupCategory: true,
@@ -87,7 +88,6 @@ export class ProjectAreasService {
       //
       //ensure the groups are indexed correctly  
       const area = await this.ensureAreaGroupsAreCorrectlyIndexed(result)
-      console.log("area is", area)
 
       return area;
     }
@@ -202,7 +202,6 @@ export class ProjectAreasService {
 
   async ensureAreaGroupsAreCorrectlyIndexed(area: ProjectAreaWithGroups) {
     const groupsGroupedByCategory = groupByValue(area.lineItemGroups, (item: LineItemGroup) => item.groupCategoryId)
-    console.log("groups in category", groupsGroupedByCategory)
     const categoryGroups = Object.keys(groupsGroupedByCategory)
     const groupsToUpdate: UpdatedItem[] = []
     const updatedGroups: LineItemGroup[] = []
