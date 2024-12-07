@@ -153,12 +153,12 @@ export class GroupsService {
             groupsToUpdate.push({ id: group.id, updatedIndex: newIndex })
             return { ...group, indexInCategory: newIndex }
           }
-          const updatedIndex = (oldIndex < newIndex ? -1 : 1)
-          groupsToUpdate.push({ id: group.id, updatedIndex })
+          const indexModifier = (oldIndex < newIndex ? -1 : 1)
+          groupsToUpdate.push({ id: group.id, updatedIndex: group.indexInCategory + indexModifier })
 
           return {
             ...group,
-            indexInCategory: group.indexInCategory + updatedIndex,
+            indexInCategory: group.indexInCategory + indexModifier,
           };
         }
         return group;
