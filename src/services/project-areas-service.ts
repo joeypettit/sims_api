@@ -45,6 +45,7 @@ export class ProjectAreasService {
               lineItems: {
                 select: {
                   id: true,
+                  indexInGroup: true,
                   marginDecimal: true,
                   quantity: true,
                   name: true,
