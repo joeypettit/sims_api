@@ -1,7 +1,8 @@
-import { LineItemGroup } from "@prisma/client";
+import { LineItem, LineItemGroup } from "@prisma/client";
 import prisma from "../../prisma/prisma-client";
 import { warn } from "console";
 import { wrap } from "module";
+import { UpdatedItem } from "../utility/project-sort";
 
 type SetIsOpenOnAllGroupsInAreaParams = {
   isOpen: boolean;
@@ -191,5 +192,40 @@ export class GroupsService {
         `Error setting group in index category ${groupId}`,
       );
     }
+  }
+
+  async ensureGroupLineItemsAreCorrectlyIndexed({ group }: { group: LineItemGroup }) {
+
+    const lineItemsToUpdate: UpdatedItem[] = []
+    const updatedLineItems: LineItem[] = []
+
+    //       .forEach((key) => {
+    //         const groupsInCat = groupsGroupedByCategory[key]
+    //         const updatedItems = reindexEntitiesInArray({ arr: groupsInCat, indexKeyName: "indexInCategory" }).updatedItemIds;
+    //         groupsToUpdate.push(...updatedItems)
+    //       })
+    //
+    //     groupsToUpdate.forEach(async (group) => {
+    //       try {
+    //         await groupService.updateIndexInCategory({ groupId: group.itemId, indexInCategory: group.updatedIndex })
+    //       } catch (error) {
+    //         console.error(
+    //           `Error updating indexInCategory on group with id: ${group.itemId}:`,
+    //           error
+    //         );
+    //         throw new Error(
+    //           `Error updating indexInCategory on group: ${error}`
+    //         );
+    //       }
+    //     })
+    //
+    //     for (const category in groupsGroupedByCategory) {
+    //       updatedGroups.push(...groupsGroupedByCategory[category])
+    //     }
+    //     area.lineItemGroups = updatedGroups;
+    //
+    //     return area;
+    //   }
+    //
   }
 }
