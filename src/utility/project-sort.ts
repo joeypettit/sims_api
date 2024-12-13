@@ -1,14 +1,14 @@
 import type { ProjectArea } from "@prisma/client";
 
-type ReindexEntitiesInListReturnType<T> = {
+type ReindexEntitiesInListReturnType<T> = [
   sortedArray: T[],
   updatedItemIds: UpdatedItem[]
-}
+]
 
 
 export type UpdatedItem = {
-  itemId: string,
-  updatedIndex: number
+  id: string;
+  updatedIndex: number;
 }
 
 
@@ -20,11 +20,11 @@ export function reindexEntitiesInArray<T extends Record<string, any>>({ arr, ind
     if (typeof item[indexKeyName] != 'number') throw Error("arr[indexKeyName] must be a number")
     if (item[indexKeyName] != index) {
       (item[indexKeyName] as number) = index;
-      const updatedItem: UpdatedItem = { itemId: item["id"], updatedIndex: item[indexKeyName] }
+      const updatedItem: UpdatedItem = { id: item["id"], updatedIndex: item[indexKeyName] }
       updatedItemIds.push(updatedItem)
     }
   });
-  return { sortedArray, updatedItemIds }
+  return [sortedArray, updatedItemIds]
 }
 
 export function sortArrayByIndexProperty<T>({ arr, indexKeyName }: { arr: T[], indexKeyName: keyof T }) {

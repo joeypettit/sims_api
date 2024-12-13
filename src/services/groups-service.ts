@@ -1,8 +1,13 @@
-import { LineItem, LineItemGroup } from "@prisma/client";
+import { LineItem, LineItemGroup, Prisma } from "@prisma/client";
 import prisma from "../../prisma/prisma-client";
-import { warn } from "console";
-import { wrap } from "module";
-import { UpdatedItem } from "../utility/project-sort";
+import { reindexEntitiesInArray, UpdatedItem } from "../utility/project-sort";
+import { lineItemGroupFullSelect } from "../repository/query-objects";
+
+const groupWithLineItem = Prisma.validator<Prisma.LineItemGroupDefaultArgs>()({
+  include: { lineItems: true }
+})
+
+type GroupWithLineItems = Prisma.LineItemGroupGetPayload<typeof groupWithLineItem>
 
 type SetIsOpenOnAllGroupsInAreaParams = {
   isOpen: boolean;
@@ -86,7 +91,8 @@ export class GroupsService {
         },
         data: {
           indexInCategory: indexInCategory
-        }
+        },
+        ...lineItemGroupFullSelect
       })
       return group;
     } catch (error) {
@@ -194,16 +200,13 @@ export class GroupsService {
     }
   }
 
-  async ensureGroupLineItemsAreCorrectlyIndexed({ group }: { group: LineItemGroup }) {
+  async ensureGroupLineItemsAreCorrectlyIndexed({ group }: { group: GroupWithLineItems }) {
 
-    const lineItemsToUpdate: UpdatedItem[] = []
     const updatedLineItems: LineItem[] = []
 
-    //       .forEach((key) => {
-    //         const groupsInCat = groupsGroupedByCategory[key]
-    //         const updatedItems = reindexEntitiesInArray({ arr: groupsInCat, indexKeyName: "indexInCategory" }).updatedItemIds;
-    //         groupsToUpdate.push(...updatedItems)
-    //       })
+
+    const updatedItemsIds = reindexEntitiesInArray({ arr: group.lineItems, indexKeyName: "indexInGroup" })
+
     //
     //     groupsToUpdate.forEach(async (group) => {
     //       try {

@@ -1,16 +1,13 @@
-import { LineItemGroup, LineItemOption, ProjectArea } from "@prisma/client";
+import { LineItemGroup, LineItemOption, Prisma, Project, ProjectArea } from "@prisma/client";
 import { GroupsService } from "./groups-service";
 import { UpdatedItem } from "../utility/project-sort";
 import { groupByValue, reindexEntitiesInArray } from "../utility/project-sort";
-import { removeKeysWhereUndefined } from "../util";
 import prisma from "../../prisma/prisma-client";
-import { ProjectAreaWithGroups } from "../../prisma/extended-types/project-area-types";
+import ProjectAreaRepo, { ProjectAreaWithGroups } from "../repository/project-area-repo";
 
 const groupService = new GroupsService()
+const projectAreaRepo = new ProjectAreaRepo()
 
-type GetByIdParams = {
-  areaId: string;
-}
 type CreateBlankParams = {
   name: string;
   projectId: string;
@@ -22,79 +19,15 @@ type CreateFromTemplateParams = {
   templateId: string;
 };
 
+
 export class ProjectAreasService {
 
-  async getById({ areaId }: GetByIdParams) {
+  async getById({ areaId }: { areaId: string }) {
 
-    try {
-      const result = await prisma.projectArea.findUnique({
-        where: {
-          id: areaId,
-        },
-        select: {
-          id: true,
-          name: true,
-          lineItemGroups: {
-            select: {
-              id: true,
-              name: true,
-              isOpen: true,
-              indexInCategory: true,
-              groupCategoryId: true,
-              groupCategory: true,
-              lineItems: {
-                select: {
-                  id: true,
-                  indexInGroup: true,
-                  marginDecimal: true,
-                  quantity: true,
-                  name: true,
-                  unit: true,
-                  lineItemGroup: {
-                    select: {
-                      groupCategory: true,
-                    },
-                  },
-                  lineItemOptions: {
-                    select: {
-                      id: true,
-                      description: true,
-                      exactCostInDollarsPerUnit: true,
-                      lowCostInDollarsPerUnit: true,
-                      highCostInDollarsPerUnit: true,
-                      isSelected: true,
-                      priceAdjustmentMultiplier: true,
-                      optionTier: {
-                        select: {
-                          name: true,
-                          tierLevel: true,
-                        },
-                      },
-                    },
-                    orderBy: {
-                      optionTier: {
-                        tierLevel: "asc",
-                      },
-                    },
-                  },
-                },
-                orderBy: {
-                  indexInGroup: "asc",
-                },
-              },
-            },
-          },
-        },
-      });
-      //
-      //ensure the groups are indexed correctly  
-      const area = await this.ensureAreaGroupsAreCorrectlyIndexed(result)
-
-      return area;
-    }
-    catch (error) {
-      throw Error(`Error getting area with id ${areaId}`)
-    }
+    let area: ProjectAreaWithGroups = await projectAreaRepo.findById({ areaId })
+    area = await this.ensureGroupsAreCorrectlyIndexed(area)
+    area = await this.ensureLineItemsAreCorrectlyIndexed(area)
+    return area;
   }
 
   async createBlank({ projectId, name }: CreateBlankParams) {
@@ -201,37 +134,112 @@ export class ProjectAreasService {
     }
   }
 
-  async ensureAreaGroupsAreCorrectlyIndexed(area: ProjectAreaWithGroups) {
-    const groupsGroupedByCategory = groupByValue(area.lineItemGroups, (item: LineItemGroup) => item.groupCategoryId)
-    const categoryGroups = Object.keys(groupsGroupedByCategory)
-    const groupsToUpdate: UpdatedItem[] = []
-    const updatedGroups: LineItemGroup[] = []
+  async ensureGroupsAreCorrectlyIndexed(area: ProjectAreaWithGroups) {
+    if (!area) throw Error("Error: Area is null or undefined");
+
+    // Group groups by category
+    const groupsGroupedByCategory = groupByValue(
+      area.lineItemGroups,
+      (item: LineItemGroup) => item.groupCategoryId
+    );
+
+    const categoryGroups = Object.keys(groupsGroupedByCategory);
+
+    // Collect all groups that need updates
+    const groupsToUpdate: UpdatedItem[] = [];
 
     categoryGroups.forEach((key) => {
-      const groupsInCat = groupsGroupedByCategory[key]
-      const updatedItems = reindexEntitiesInArray({ arr: groupsInCat, indexKeyName: "indexInCategory" }).updatedItemIds;
-      groupsToUpdate.push(...updatedItems)
-    })
+      const groupsInCat = groupsGroupedByCategory[key];
+      const [ignored, updatedItems] = reindexEntitiesInArray({
+        arr: groupsInCat,
+        indexKeyName: "indexInCategory",
+      });
+      groupsToUpdate.push(...updatedItems);
+    });
 
-    groupsToUpdate.forEach(async (group) => {
-      try {
-        await groupService.updateIndexInCategory({ groupId: group.itemId, indexInCategory: group.updatedIndex })
-      } catch (error) {
-        console.error(
-          `Error updating indexInCategory on group with id: ${group.itemId}:`,
-          error
+    // Update groups and build the new line item groups array
+    const newLineItemGroups = await Promise.all(
+      area.lineItemGroups.map(async (group) => {
+        const groupToUpdate = groupsToUpdate.find(
+          (update) => update.id === group.id
         );
-        throw new Error(
-          `Error updating indexInCategory on group: ${error}`
-        );
-      }
-    })
 
-    for (const category in groupsGroupedByCategory) {
-      updatedGroups.push(...groupsGroupedByCategory[category])
+        if (groupToUpdate) {
+          try {
+            return await groupService.updateIndexInCategory({
+              groupId: groupToUpdate.id,
+              indexInCategory: groupToUpdate.updatedIndex,
+            });
+          } catch (error) {
+            console.error(`Error updating indexInCategory on group with id: ${groupToUpdate.id}:`, error); throw new Error(`Error updating indexInCategory on group: ${error}`);
+          }
+        }
+
+        // If the group doesn't need an update, return it as-is
+        return group;
+      })
+    );
+
+    // Return the new area object with updated groups
+    const newArea = {
+      ...area,
+      lineItemGroups: newLineItemGroups,
+    };
+
+    return newArea;
+  }
+
+  async ensureLineItemsAreCorrectlyIndexed(area: ProjectAreaWithGroups) {
+    if (!area) throw Error("Error: Area is null or undefined");
+
+    const groups = [...area.lineItemGroups];
+
+    for (let group of groups) {
     }
-    area.lineItemGroups = updatedGroups;
 
+    // categoryGroups.forEach((key) => {
+    //   const groupsInCat = groupsGroupedByCategory[key];
+    //   const updatedItems = reindexEntitiesInArray({
+    //     arr: groupsInCat,
+    //     indexKeyName: "indexInCategory",
+    //   }).updatedItemIds;
+    //   groupsToUpdate.push(...updatedItems);
+    // });
+    //
+    // // Update groups and build the new line item groups array
+    // const newLineItemGroups = await Promise.all(
+    //   area.lineItemGroups.map(async (group) => {
+    //     const groupToUpdate = groupsToUpdate.find(
+    //       (update) => update.id === group.id
+    //     );
+    //
+    //     if (groupToUpdate) {
+    //       try {
+    //         return await groupService.updateIndexInCategory({
+    //           groupId: groupToUpdate.id,
+    //           indexInCategory: groupToUpdate.updatedIndex,
+    //         });
+    //       } catch (error) {
+    //         console.error(
+    //           `Error updating indexInCategory on group with id: ${groupToUpdate.id}:`,
+    //           error
+    //         );
+    //         throw new Error(`Error updating indexInCategory on group: ${error}`);
+    //       }
+    //     }
+    //
+    //     // If the group doesn't need an update, return it as-is
+    //     return group;
+    //   })
+    // );
+    //
+    // // Return the new area object with updated groups
+    // const newArea: ProjectAreaWithGroups = {
+    //   ...area,
+    //   lineItemGroups: newLineItemGroups,
+    // };
+    //
     return area;
   }
+
 }
