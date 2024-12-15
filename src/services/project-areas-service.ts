@@ -192,46 +192,44 @@ export class ProjectAreasService {
   async ensureLineItemsAreCorrectlyIndexed(area: ProjectAreaWithGroups) {
     if (!area) throw Error("Error: Area is null or undefined");
 
-    const groups = [...area.lineItemGroups];
+    const lineItemsToUpdate: UpdatedItem[] = [];
+    const updatedGroups = area.lineItemGroups.map((group) => {
+      const [updatedLineItems, itemsToUpdate] = reindexEntitiesInArray({
+        arr: group.lineItems,
+        indexKeyName: "indexInGroup"
+      })
+      lineItemsToUpdate.push(...itemsToUpdate)
+      return { ...group, updatedLineItems }
+    })
 
-    for (let group of groups) {
-    }
 
-    // categoryGroups.forEach((key) => {
-    //   const groupsInCat = groupsGroupedByCategory[key];
-    //   const updatedItems = reindexEntitiesInArray({
-    //     arr: groupsInCat,
-    //     indexKeyName: "indexInCategory",
-    //   }).updatedItemIds;
-    //   groupsToUpdate.push(...updatedItems);
-    // });
-    //
-    // // Update groups and build the new line item groups array
-    // const newLineItemGroups = await Promise.all(
-    //   area.lineItemGroups.map(async (group) => {
-    //     const groupToUpdate = groupsToUpdate.find(
-    //       (update) => update.id === group.id
-    //     );
-    //
-    //     if (groupToUpdate) {
-    //       try {
-    //         return await groupService.updateIndexInCategory({
-    //           groupId: groupToUpdate.id,
-    //           indexInCategory: groupToUpdate.updatedIndex,
-    //         });
-    //       } catch (error) {
-    //         console.error(
-    //           `Error updating indexInCategory on group with id: ${groupToUpdate.id}:`,
-    //           error
-    //         );
-    //         throw new Error(`Error updating indexInCategory on group: ${error}`);
-    //       }
-    //     }
-    //
-    //     // If the group doesn't need an update, return it as-is
-    //     return group;
-    //   })
-    // );
+    console.log("lineItemsToUpdate", lineItemsToUpdate, updatedGroups)
+
+    await Promise.all(
+      area.lineItemGroups.map(async (group) => {
+        const groupToUpdate = groupsToUpdate.find(
+          (update) => update.id === group.id
+        );
+
+        if (groupToUpdate) {
+          try {
+            return await groupService.updateIndexInCategory({
+              groupId: groupToUpdate.id,
+              indexInCategory: groupToUpdate.updatedIndex,
+            });
+          } catch (error) {
+            console.error(
+              `Error updating indexInCategory on group with id: ${groupToUpdate.id}:`,
+              error
+            );
+            throw new Error(`Error updating indexInCategory on group: ${error}`);
+          }
+        }
+
+        // If the group doesn't need an update, return it as-is
+        return group;
+      })
+    );
     //
     // // Return the new area object with updated groups
     // const newArea: ProjectAreaWithGroups = {

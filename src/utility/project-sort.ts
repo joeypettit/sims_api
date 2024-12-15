@@ -15,16 +15,16 @@ export type UpdatedItem = {
 
 export function reindexEntitiesInArray<T extends Record<string, any>>({ arr, indexKeyName }: { arr: T[], indexKeyName: keyof T }): ReindexEntitiesInListReturnType<T> {
   const sortedArray = sortArrayByIndexProperty({ arr, indexKeyName })
-  const updatedItemIds: UpdatedItem[] = [];
+  const updatedItems: UpdatedItem[] = [];
   sortedArray.forEach((item, index) => {
     if (typeof item[indexKeyName] != 'number') throw Error("arr[indexKeyName] must be a number")
     if (item[indexKeyName] != index) {
       (item[indexKeyName] as number) = index;
       const updatedItem: UpdatedItem = { id: item["id"], updatedIndex: item[indexKeyName] }
-      updatedItemIds.push(updatedItem)
+      updatedItems.push(updatedItem)
     }
   });
-  return [sortedArray, updatedItemIds]
+  return [sortedArray, updatedItems]
 }
 
 export function sortArrayByIndexProperty<T>({ arr, indexKeyName }: { arr: T[], indexKeyName: keyof T }) {
