@@ -27,12 +27,13 @@ export default class LineItemsRepo {
         },
         data: {
           indexInGroup: indexInGroup
-        }
+        },
+        ...lineItemFullSelect
       });
       return result;
     }
     catch (error) {
-      throw Error(`Error finding lineItem with id ${lineItemId}`)
+      throw Error(`Error updating index for lineItem with id ${lineItemId}`)
     }
   }
 }

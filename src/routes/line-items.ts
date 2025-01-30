@@ -5,6 +5,7 @@ import type { LineItemOption, OptionTier } from "@prisma/client";
 import { removeKeysWhereUndefined } from "../util";
 import { OptionsService } from "../services/options-services";
 import { simulateNetworkLatency } from "../util";
+import { LineItemsService } from "../services/line-items-service";
 
 const optionsService = new OptionsService();
 
@@ -49,13 +50,9 @@ router.get("/:lineItemId", async (req, res) => {
       return;
     }
 
-    // Send the result if found
     res.status(200).json(result);
   } catch (error) {
-    console.error("Error fetching line item:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching line item" });
+    res.status(500).json({ error: "An error occurred while fetching line item" });
   }
 });
 
@@ -281,6 +278,27 @@ router.put("/:lineItemId/unselect-option/:optionId", async (req, res) => {
   });
 
   res.send(result);
+});
+
+router.put("/:lineItemId/set-index", async (req, res) => {
+  const { lineItemId } = req.params;
+  const { newIndex } = req.body;
+
+  if (typeof newIndex !== 'number') {
+    res.status(400).json({ error: "New index must be a number" });
+    return;
+  }
+
+  try {
+    const lineItemsService = new LineItemsService();
+    const result = await lineItemsService.updateIndexInGroup({
+      lineItemId,
+      indexInGroup: newIndex
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred while updating the line item index" });
+  }
 });
 
 router.delete("/:lineItemId", async (req, res) => {
