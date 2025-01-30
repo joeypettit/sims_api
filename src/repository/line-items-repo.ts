@@ -19,4 +19,20 @@ export default class LineItemsRepo {
     }
   }
 
+  async updateIndexInGroup({ lineItemId, indexInGroup }: { lineItemId: string, indexInGroup: number }) {
+    try {
+      const result = await prisma.lineItem.update({
+        where: {
+          id: lineItemId,
+        },
+        data: {
+          indexInGroup: indexInGroup
+        }
+      });
+      return result;
+    }
+    catch (error) {
+      throw Error(`Error finding lineItem with id ${lineItemId}`)
+    }
+  }
 }

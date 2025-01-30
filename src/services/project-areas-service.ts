@@ -1,10 +1,12 @@
 import { LineItemGroup, LineItemOption, Prisma, Project, ProjectArea } from "@prisma/client";
+import { LineItemsService } from "./line-items-service";
 import { GroupsService } from "./groups-service";
 import { UpdatedItem } from "../utility/project-sort";
 import { groupByValue, reindexEntitiesInArray } from "../utility/project-sort";
 import prisma from "../../prisma/prisma-client";
 import ProjectAreaRepo, { ProjectAreaWithGroups } from "../repository/project-area-repo";
 
+const lineItemService = new LineItemsService()
 const groupService = new GroupsService()
 const projectAreaRepo = new ProjectAreaRepo()
 
@@ -194,50 +196,41 @@ export class ProjectAreasService {
 
     const lineItemsToUpdate: UpdatedItem[] = [];
     const updatedGroups = area.lineItemGroups.map((group) => {
-      const [updatedLineItems, itemsToUpdate] = reindexEntitiesInArray({
+      const [updatedLineItemArray, itemsToUpdate] = reindexEntitiesInArray({
         arr: group.lineItems,
         indexKeyName: "indexInGroup"
       })
+      console.log("testing here", updatedLineItemArray)
       lineItemsToUpdate.push(...itemsToUpdate)
-      return { ...group, updatedLineItems }
+      return { ...group, updatedLineItemArray }
     })
 
-
-    console.log("lineItemsToUpdate", lineItemsToUpdate, updatedGroups)
-
     await Promise.all(
-      area.lineItemGroups.map(async (group) => {
-        const groupToUpdate = groupsToUpdate.find(
-          (update) => update.id === group.id
-        );
-
-        if (groupToUpdate) {
-          try {
-            return await groupService.updateIndexInCategory({
-              groupId: groupToUpdate.id,
-              indexInCategory: groupToUpdate.updatedIndex,
-            });
-          } catch (error) {
-            console.error(
-              `Error updating indexInCategory on group with id: ${groupToUpdate.id}:`,
-              error
-            );
-            throw new Error(`Error updating indexInCategory on group: ${error}`);
-          }
+      lineItemsToUpdate.map(async (updatedItem) => {
+        console.log("updatedItem:", updatedItem);
+        try {
+          return await lineItemService.updateIndexInGroup({
+            lineItemId: updatedItem.id,
+            indexInGroup: updatedItem.updatedIndex,
+          });
+        } catch (error) {
+          console.error(
+            `Error updating indexInGroup on line item with id: ${updatedItem.id}:`,
+            error
+          );
+          throw new Error(`Error updating indexInGroup on line item: ${error}`);
         }
-
-        // If the group doesn't need an update, return it as-is
-        return group;
       })
     );
-    //
-    // // Return the new area object with updated groups
-    // const newArea: ProjectAreaWithGroups = {
-    //   ...area,
-    //   lineItemGroups: newLineItemGroups,
-    // };
-    //
-    return area;
+    
+    // Return the new area object with updated groups
+    const newArea: ProjectAreaWithGroups = {
+      ...area,
+      lineItemGroups: updatedGroups,
+    };
+    
+
+    return newArea;
   }
 
 }
