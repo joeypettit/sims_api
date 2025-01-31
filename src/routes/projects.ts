@@ -2,6 +2,9 @@ import express from "express";
 const router = express.Router();
 import prisma from "../../prisma/prisma-client";
 import { removeKeysWhereUndefined, simulateNetworkLatency } from "../util";
+import { ProjectsService } from "../services/projects-service";
+
+const projectsService = new ProjectsService();
 
 // define the home page route
 router.get("/", async (req, res) => {
@@ -16,7 +19,7 @@ router.get("/", async (req, res) => {
   res.send(result);
 });
 
-router.get("/:projectId", async (req, res) => {
+router.get("/get-by-id/:projectId", async (req, res) => {
   const projectId = req.params.projectId;
   const result = await prisma.project.findUnique({
     where: {
@@ -54,6 +57,7 @@ router.post("/create-blank", async (req, res) => {
 });
 
 router.put("/:projectId", async (req, res) => {
+
   const {
     name,
     clientFirstName,
@@ -107,6 +111,21 @@ router.put("/:projectId", async (req, res) => {
   } catch (error) {
     console.error("Error updating project:", error);
     res.status(500).json({ error: "An error occurred while updating project" });
+  }
+});
+
+router.get("/search", async (req, res) => {
+  const { query, page, limit } = req.query;
+
+  try {
+    const result = await projectsService.search({
+      query: query as string,
+      page: page as string,
+      limit: limit as string
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Error searching projects" });
   }
 });
 
