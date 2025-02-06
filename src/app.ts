@@ -6,11 +6,40 @@ import templatesRoutes from "./routes/templates";
 import unitsRoutes from "./routes/units";
 import optionsRoutes from "./routes/options";
 import areasRoutes from "./routes/project-areas";
+import authRoutes from "./routes/auth";
+import session from 'express-session';
+import passport from "passport";
+import prisma from "../prisma/prisma-client";
+import { PrismaSessionStore } from "../prisma/prisma-session-store";
+import '../passport/passport';
 
 const app = express();
 const port = 3000;
 
+
+app.use(session({
+  secret: process.env.SESSION_SECRET!,
+  resave: false,
+  saveUninitialized: false,
+  store: new PrismaSessionStore(prisma),
+  cookie: {
+    maxAge: 30 * 24 * 60 * 60 * 1000, 
+    httpOnly: true,
+  }
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next)=>{
+  console.log(req.session);
+  console.log(req.user);
+  next();
+})
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectsRoutes);
 app.use("/api/line-items", lineItemsRoutes);
 app.use("/api/groups", groupRoutes);

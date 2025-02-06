@@ -43,16 +43,18 @@ router.post("/create-blank", async (req, res) => {
       data: {
         name: name,
         description: "",
-        clients: { create: { firstName: "", lastName: "" } },
-        users: { create: { firstName: "", lastName: "" } },
+        clients: { 
+          create: [{ firstName: "", lastName: "" }]
+        },
+        users: { 
+          connect: []
+        },
       },
     });
     res.status(201).json(newProject);
   } catch (error) {
     console.error("Error creating new project:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while creating new project" });
+    res.status(500).json({ error: "An error occurred while creating new project" });
   }
 });
 
