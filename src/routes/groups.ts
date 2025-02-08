@@ -3,8 +3,10 @@ const router = express.Router();
 import prisma from "../../prisma/prisma-client";
 import type { GroupCategory } from "@prisma/client";
 import { GroupsService } from "../services/groups-service";
-
+import { isAuthenticated } from "../middleware/auth";
 const groupsService = new GroupsService()
+
+router.use(isAuthenticated);
 
 router.get("/all-categories", async (req, res) => {
   let result: GroupCategory[] | null = null;

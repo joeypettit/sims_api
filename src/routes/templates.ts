@@ -4,6 +4,9 @@ import prisma from "../../prisma/prisma-client";
 import { simulateNetworkLatency } from "../util";
 import { ProjectArea } from "@prisma/client";
 import { AreaTemplate } from "@prisma/client";
+import { isAuthenticated } from "../middleware/auth";
+
+router.use(isAuthenticated);
 
 router.get("/area/all-templates", async (req, res) => {
   let templates: AreaTemplate[] | null = null;

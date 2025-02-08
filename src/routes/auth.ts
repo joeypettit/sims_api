@@ -1,114 +1,127 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
 import bcryptjs from 'bcryptjs';
 import prisma from '../../prisma/prisma-client';
 import passport from 'passport';
-import { hashPassword } from '../../passport/password-utils';
+import { hashPassword } from '../../auth/password-utils';
+import { isAuthenticated, isAdmin } from '../middleware/auth';
+import { User } from '@prisma/client';
 
 const router = Router();
 
-router.post('/register', async (req: Request, res: Response): Promise<void> => {
-    const { email, password, firstName, lastName } = req.body;
-    console.log('Raw request body:', req.body);
+router.use((req, res, next)=>{
+    console.log('auth request');
+    next();
+});
+
+// Create new user (admin only)
+router.post('/create-user', isAuthenticated, isAdmin, (async (req: Request, res: Response) => {
+    const { email, password, firstName, lastName, isAdmin: newUserIsAdmin } = req.body;
     
     if (!email || !password || !firstName || !lastName) {
-        res.status(400).send('All fields are required');
+        res.status(400).json({ error: 'All fields are required' });
         return;
     }
 
     try {
+        // Check if user already exists
+        const existingUser = await prisma.userAccount.findUnique({
+            where: { email }
+        });
+
+        if (existingUser) {
+            res.status(400).json({ error: 'User with this email already exists' });
+            return;
+        }
+
         const hashedPassword = await hashPassword(password);
         const userAccount = await prisma.userAccount.create({
             data: { 
                 email, 
-                passwordHash: hashedPassword, 
+                passwordHash: hashedPassword,
+                isAdmin: newUserIsAdmin || false,
                 user: { 
                     create: { 
                         firstName, 
                         lastName 
                     } 
                 } 
+            },
+            include: {
+                user: true
             }
         });
-        res.redirect('/api/auth/login');
+        res.status(201).json({ 
+            message: 'User created successfully',
+            user: {
+                id: userAccount.user?.id,
+                firstName: userAccount.user?.firstName,
+                lastName: userAccount.user?.lastName,
+                email: userAccount.email,
+                isAdmin: userAccount.isAdmin
+            }
+        });
     } catch (error) {
         console.error('Error creating user account:', error);
-        res.status(500).send('Error creating user account');
+        res.status(500).json({ error: 'Error creating user account' });
     }
-});
-
-router.post('/login', passport.authenticate('local', {
-    successRedirect: '/api/auth/login-success',
-    failureRedirect: '/api/auth/login-failure'
 }));
 
-/**
- * -------------- GET ROUTES ----------------
- */
-
-router.get('/', (req, res, next) => {
-    res.send('<h1>Home</h1><p>Please <a href="/api/auth/register">register</a></p>');
+// Login
+router.post('/login', (req: Request, res: Response, next: NextFunction) => {
+    passport.authenticate('local', (err: any, user: User | false, info: any) => {
+        if (err) {
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+            return res.status(200).json({ 
+                message: 'Login successful',
+                user: {
+                    id: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName
+                }
+            });
+        });
+    })(req, res, next);
 });
 
-// When you visit http://localhost:3000/login, you will see "Login Page"
-router.get('/login', (req, res, next) => {
-   
-    const form = '<h1>Login Page</h1><form method="POST" action="/api/auth/login">\
-    Enter Email:<br><input type="text" name="email">\
-    <br>Enter Password:<br><input type="password" name="password">\
-    <br><br><input type="submit" value="Submit"></form>';
-
-    res.send(form);
-
+// Get current user
+router.get('/me', isAuthenticated, async (req, res) => {
+    res.json(req.user);
 });
 
-// When you visit http://localhost:3000/register, you will see "Register Page"
-router.get('/register', (req, res, next) => {
-    const form = `
-        <h1>Register Page</h1>
-        <form method="POST" action="/api/auth/register">
-            <label for="email">Enter Email:</label><br>
-            <input type="email" id="email" name="email" required><br>
-            <label for="password">Enter Password:</label><br>
-            <input type="password" id="password" name="password" required><br>
-            <label for="firstName">Enter First Name:</label><br>
-            <input type="text" id="firstName" name="firstName" required><br>
-            <label for="lastName">Enter Last Name:</label><br>
-            <input type="text" id="lastName" name="lastName" required><br><br>
-            <input type="submit" value="Submit">
-        </form>
-    `;
-    res.send(form);
-});
-
-/**
- * Lookup how to authenticate users on routes with Local Strategy
- * Google Search: "How to use Express Passport Local Strategy"
- * 
- * Also, look up what behaviour express session has without a maxage set
- */
-router.get('/protected-route', (req, res, next) => {
-    
-    // This is how you check if a user is authenticated and protect a route.  You could turn this into a custom middleware to make it less redundant
-    if (req.isAuthenticated()) {
-        res.send('<h1>You are authenticated</h1><p><a href="/api/auth/logout">Logout and reload</a></p>');
-    } else {
-        res.send('<h1>You are not authenticated</h1><p><a href="/api/auth/login">Login</a></p>');
-    }
-});
-
-// Visiting this route logs the user out
-router.get('/logout', (req, res, next) => {
+// Logout
+router.post('/logout', (req, res) => {
     req.logout(() => {
-        res.redirect('/api/auth/protected-route');
+        res.json({ message: 'Logged out successfully' });
     });
 });
 
-router.get('/login-success', (req, res, next) => {
-    res.send('<p>You successfully logged in. --> <a href="/api/auth/protected-route">Go to protected route</a></p>');
-});
-
-router.get('/login-failure', (req, res, next) => {
-    res.send('You entered the wrong password.');
+// Get all users (admin only)
+router.get('/users', isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    console.log('Getting all users');
+    try {
+        const users = await prisma.user.findMany({
+            include: {
+                userAccount: {
+                    select: {
+                        email: true,
+                        isAdmin: true
+                    }
+                }
+            }
+        });
+        res.json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Error fetching users' });
+    }
 });
 
 export default router; 

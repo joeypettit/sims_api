@@ -1,8 +1,48 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../auth/password-utils";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  // Create User Accounts with hashed passwords
+  const aliceAccount = await prisma.userAccount.create({
+    data: {
+      email: "alice@example.com",
+      passwordHash: await hashPassword("password123"),
+      isAdmin: true,
+      user: {
+        create: {
+          firstName: "Alice",
+          lastName: "Johnson"
+        }
+      }
+    },
+    include: {
+      user: true
+    }
+  });
+
+  const bobAccount = await prisma.userAccount.create({
+    data: {
+      email: "bob@example.com",
+      passwordHash: await hashPassword("password123"),
+      isAdmin: false,
+      user: {
+        create: {
+          firstName: "Bob",
+          lastName: "Williams"
+        }
+      }
+    },
+    include: {
+      user: true
+    }
+  });
+
+  if (!aliceAccount.user || !bobAccount.user) {
+    throw new Error("Failed to create user accounts properly");
+  }
+
   // Create Product Tiers
   const premierTier = await prisma.optionTier.create({
     data: {
@@ -90,21 +130,6 @@ async function main() {
     },
   });
 
-  // Create Users
-  const user1 = await prisma.user.create({
-    data: {
-      firstName: "Alice",
-      lastName: "Johnson",
-    },
-  });
-
-  const user2 = await prisma.user.create({
-    data: {
-      firstName: "Bob",
-      lastName: "Williams",
-    },
-  });
-
   // Create Projects and Related Data
   const project1 = await prisma.project.create({
     data: {
@@ -115,7 +140,7 @@ async function main() {
         connect: [{ id: client1.id }],
       },
       users: {
-        connect: [{ id: user1.id }, { id: user2.id }],
+        connect: [{ id: aliceAccount.user.id }, { id: bobAccount.user.id }],
       },
       areas: {
         create: [

@@ -11,7 +11,7 @@ import session from 'express-session';
 import passport from "passport";
 import prisma from "../prisma/prisma-client";
 import { PrismaSessionStore } from "../prisma/prisma-session-store";
-import '../passport/passport';
+import '../auth/passport';
 
 const app = express();
 const port = 3000;

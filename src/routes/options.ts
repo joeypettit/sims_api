@@ -4,8 +4,10 @@ import prisma from "../../prisma/prisma-client";
 import type { LineItemOption, OptionTier } from "@prisma/client";
 import { removeKeysWhereUndefined } from "../util";
 import { OptionsService } from "../services/options-services";
-
+import { isAuthenticated } from "../middleware/auth";
 const optionsService = new OptionsService();
+
+router.use(isAuthenticated);
 
 router.get("/:optionId", async (req, res) => {
   const lineItemId = req.params.optionId;

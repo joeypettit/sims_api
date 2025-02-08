@@ -6,8 +6,12 @@ import { removeKeysWhereUndefined } from "../util";
 import { OptionsService } from "../services/options-services";
 import { simulateNetworkLatency } from "../util";
 import { LineItemsService } from "../services/line-items-service";
+import { isAuthenticated } from "../middleware/auth";
 
 const optionsService = new OptionsService();
+
+// Apply isAuthenticated to all routes
+router.use(isAuthenticated);
 
 router.get("/:lineItemId", async (req, res) => {
   const lineItemId = req.params.lineItemId;

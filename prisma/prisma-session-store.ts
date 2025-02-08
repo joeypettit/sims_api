@@ -4,7 +4,24 @@ import { Store } from "express-session";
 export class PrismaSessionStore extends Store {
   constructor(private prisma: PrismaClient) {
     super();
+    // Run cleanup every hour
+    setInterval(() => this.cleanup(), 60 * 60 * 1000);
   }
+
+  private async cleanup() {
+    try {
+      await this.prisma.session.deleteMany({
+        where: {
+          expiresAt: {
+            lt: new Date()
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error cleaning up expired sessions:', error);
+    }
+  }
+
   // get is used to get the session
   async get(sessionId: string, callback: (err: any, session?: any) => void): Promise<void> {
     try {

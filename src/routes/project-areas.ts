@@ -2,6 +2,9 @@ import express from "express";
 import { ProjectAreasService } from "../services/project-areas-service";
 const router = express.Router();
 const projectAreaService = new ProjectAreasService();
+import { isAuthenticated } from "../middleware/auth";
+
+router.use(isAuthenticated);
 
 router.post("/create-blank", async (req, res) => {
   const { name, projectId } = req.body;

@@ -3,8 +3,12 @@ const router = express.Router();
 import prisma from "../../prisma/prisma-client";
 import { removeKeysWhereUndefined, simulateNetworkLatency } from "../util";
 import { ProjectsService } from "../services/projects-service";
+import { isAuthenticated } from "../middleware/auth";
 
 const projectsService = new ProjectsService();
+
+// Apply isAuthenticated to all routes
+router.use(isAuthenticated);
 
 // define the home page route
 router.get("/", async (req, res) => {
