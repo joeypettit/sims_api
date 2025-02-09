@@ -15,6 +15,7 @@ router.use((req, res, next)=>{
 
 // Create new user (admin only)
 router.post('/create-user', isAuthenticated, isAdmin, (async (req: Request, res: Response) => {
+    console.log('Creating user', req.body);
     const { email, password, firstName, lastName, isAdmin: newUserIsAdmin } = req.body;
     
     if (!email || !password || !firstName || !lastName) {
@@ -107,7 +108,50 @@ router.post('/logout', (req, res) => {
 router.get('/users', isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     console.log('Getting all users');
     try {
-        const users = await prisma.user.findMany({
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const skip = (page - 1) * limit;
+
+        const [users, total] = await Promise.all([
+            prisma.user.findMany({
+                skip,
+                take: limit,
+                include: {
+                    userAccount: {
+                        select: {
+                            email: true,
+                            isAdmin: true
+                        }
+                    }
+                },
+                orderBy: {
+                    firstName: 'asc'
+                }
+            }),
+            prisma.user.count()
+        ]);
+
+        res.json({
+            users,
+            pagination: {
+                total,
+                pages: Math.ceil(total / limit),
+                currentPage: page
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Error fetching users' });
+    }
+});
+
+// Get single user (admin only)
+router.get('/users/:userId', isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
             include: {
                 userAccount: {
                     select: {
@@ -117,10 +161,73 @@ router.get('/users', isAuthenticated, isAdmin, async (req: Request, res: Respons
                 }
             }
         });
-        res.json(users);
+
+        if (!user) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+
+        res.json(user);
     } catch (error) {
-        console.error('Error fetching users:', error);
-        res.status(500).json({ error: 'Error fetching users' });
+        console.error('Error fetching user:', error);
+        res.status(500).json({ error: 'Error fetching user' });
+    }
+});
+
+// Update user (admin only)
+router.put('/users/:userId', isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const { firstName, lastName, email, isAdmin: newIsAdmin } = req.body;
+    
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: { userAccount: true }
+        });
+
+        if (!user) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+
+        // Update user and account in a transaction
+        const updatedUser = await prisma.$transaction(async (prisma) => {
+            // Update user details
+            const user = await prisma.user.update({
+                where: { id: userId },
+                data: { firstName, lastName },
+                include: {
+                    userAccount: {
+                        select: {
+                            email: true,
+                            isAdmin: true
+                        }
+                    }
+                }
+            });
+
+            // Update user account if email or isAdmin changed
+            if (email || typeof newIsAdmin === 'boolean') {
+                await prisma.userAccount.update({
+                    where: { id: user.userAccountId },
+                    data: {
+                        ...(email && { email }),
+                        ...(typeof newIsAdmin === 'boolean' && { isAdmin: newIsAdmin })
+                    }
+                });
+            }
+
+            return user;
+        });
+
+        res.json(updatedUser);
+    } catch (error: any) {
+        console.error('Error updating user:', error);
+        if (error.code === 'P2002') {
+            res.status(400).json({ error: 'Email already exists' });
+        } else {
+            res.status(500).json({ error: 'Error updating user' });
+        }
     }
 });
 
