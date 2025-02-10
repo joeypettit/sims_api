@@ -1,45 +1,81 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, UserRole } from "@prisma/client";
 import { hashPassword } from "../auth/password-utils";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  // Create Aaron Harrison as super admin
+  const aaronPassword = await hashPassword('password123');
+  const aaron = await prisma.userAccount.create({
+    data: {
+      email: 'aaron@simsincorporated.com',
+      passwordHash: aaronPassword,
+      role: UserRole.SUPER_ADMIN,
+      user: {
+        create: {
+          firstName: 'Aaron',
+          lastName: 'Harrison'
+        }
+      }
+    }
+  });
+
+  // Create Joey Pettit as super admin
+  const joeyPassword = await hashPassword('password123');
+  const joey = await prisma.userAccount.create({
+    data: {
+      email: 'joeywpettit@gmail.com',
+      passwordHash: joeyPassword,
+      role: UserRole.SUPER_ADMIN,
+      user: {
+        create: {
+          firstName: 'Joey',
+          lastName: 'Pettit'
+        }
+      }
+    }
+  });
+
+  console.log('Created super admin users:', { aaron, joey });
+
   // Create User Accounts with hashed passwords
   const aliceAccount = await prisma.userAccount.create({
     data: {
       email: "alice@example.com",
       passwordHash: await hashPassword("password123"),
-      isAdmin: true,
+      role: UserRole.ADMIN,
       user: {
         create: {
           firstName: "Alice",
           lastName: "Johnson"
         }
       }
-    },
-    include: {
-      user: true
     }
+  });
+
+  const aliceUser = await prisma.user.findUnique({
+    where: { userAccountId: aliceAccount.id }
   });
 
   const bobAccount = await prisma.userAccount.create({
     data: {
       email: "bob@example.com",
       passwordHash: await hashPassword("password123"),
-      isAdmin: false,
+      role: UserRole.USER,
       user: {
         create: {
           firstName: "Bob",
           lastName: "Williams"
         }
       }
-    },
-    include: {
-      user: true
     }
   });
 
-  if (!aliceAccount.user || !bobAccount.user) {
+  const bobUser = await prisma.user.findUnique({
+    where: { userAccountId: bobAccount.id }
+  });
+
+  if (!aliceUser || !bobUser) {
     throw new Error("Failed to create user accounts properly");
   }
 
@@ -140,7 +176,7 @@ async function main() {
         connect: [{ id: client1.id }],
       },
       users: {
-        connect: [{ id: aliceAccount.user.id }, { id: bobAccount.user.id }],
+        connect: [{ id: aliceUser.id }, { id: bobUser.id }],
       },
       areas: {
         create: [
@@ -1581,7 +1617,8 @@ async function main() {
                             lowCostInDollarsPerUnit: 400,
                             highCostInDollarsPerUnit: 600,
                             priceAdjustmentMultiplier: 0.12,
-                            description: "Designer satin finish for flooring.",
+                            description:
+                              "Designer satin finish for flooring.",
                             optionTier: {
                               connect: { id: designerTier.id },
                             },
