@@ -4,6 +4,7 @@ import { removeKeysWhereUndefined, simulateNetworkLatency } from "../util";
 import { ProjectsService } from "../services/projects-service";
 import { isAuthenticated } from "../middleware/auth";
 
+
 const router = express.Router();
 const projectsService = new ProjectsService();
 
@@ -42,7 +43,15 @@ router.get("/get-by-id/:projectId", async (req, res) => {
 });
 
 router.post("/create-blank", async (req, res) => {
-  const { name } = req.body;
+  const { name, userId } = req.body;
+  if (!userId) {
+    res.status(400).json({ error: "User ID is required" });
+    return;
+  }
+  if (!name) {
+    res.status(400).json({ error: "Name is required" });
+    return;
+  }
   try {
     const newProject = await prisma.project.create({
       data: {
@@ -52,7 +61,7 @@ router.post("/create-blank", async (req, res) => {
           create: [{ firstName: "", lastName: "" }]
         },
         users: { 
-          connect: [{ id: req.user.id }]
+          connect: [{ id: userId }]
         },
       },
     });
