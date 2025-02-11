@@ -167,6 +167,7 @@ async function main() {
   });
 
   // Create Projects and Related Data
+  // This project will be assigned to Alice (Admin) as the project manager and Bob (User) as the sales person
   const project1 = await prisma.project.create({
     data: {
       name: "Doe Family Kitchen Remodel",
