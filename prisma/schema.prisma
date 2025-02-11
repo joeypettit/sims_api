@@ -37,6 +37,8 @@ model Client {
   id        String    @id @default(uuid())
   firstName String
   lastName  String
+  email     String?
+  phone     String?
   projects  Project[]
 }
 

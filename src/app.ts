@@ -7,6 +7,7 @@ import unitsRoutes from "./routes/units";
 import optionsRoutes from "./routes/options";
 import areasRoutes from "./routes/project-areas";
 import authRoutes from "./routes/auth";
+import clientsRoutes from "./routes/clients";
 import session from 'express-session';
 import passport from "passport";
 import prisma from "../prisma/prisma-client";
@@ -47,6 +48,7 @@ app.use("/api/templates", templatesRoutes);
 app.use("/api/units", unitsRoutes);
 app.use("/api/options", optionsRoutes);
 app.use("/api/project-areas", areasRoutes);
+app.use("/api/clients", clientsRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

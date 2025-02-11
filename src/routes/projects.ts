@@ -134,4 +134,51 @@ router.delete("/:projectId/users/:userId", isAuthenticated, async (req, res) => 
   }
 });
 
+// Add client to project
+router.post("/:projectId/clients", isAuthenticated, async (req, res) => {
+  const { projectId } = req.params;
+  const { clientId } = req.body;
+
+  try {
+    const updatedProject = await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        clients: {
+          connect: { id: clientId }
+        }
+      },
+      include: {
+        clients: true
+      }
+    });
+    res.json(updatedProject);
+  } catch (error) {
+    console.error("Error adding client to project:", error);
+    res.status(500).json({ error: "Failed to add client to project" });
+  }
+});
+
+// Remove client from project
+router.delete("/:projectId/clients/:clientId", isAuthenticated, async (req, res) => {
+  const { projectId, clientId } = req.params;
+
+  try {
+    const updatedProject = await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        clients: {
+          disconnect: { id: clientId }
+        }
+      },
+      include: {
+        clients: true
+      }
+    });
+    res.json(updatedProject);
+  } catch (error) {
+    console.error("Error removing client from project:", error);
+    res.status(500).json({ error: "Failed to remove client from project" });
+  }
+});
+
 export default router;

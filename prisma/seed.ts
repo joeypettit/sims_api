@@ -156,6 +156,8 @@ async function main() {
     data: {
       firstName: "John",
       lastName: "Doe",
+      email: "john.doe@example.com",
+      phone: "(555) 123-4567"
     },
   });
 
@@ -163,6 +165,8 @@ async function main() {
     data: {
       firstName: "Jane",
       lastName: "Smith",
+      email: "jane.smith@example.com",
+      phone: "(555) 987-6543"
     },
   });
 

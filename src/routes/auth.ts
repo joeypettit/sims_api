@@ -189,7 +189,7 @@ router.get('/users/search', isAuthenticated, async (req: Request, res: Response)
                     }
                 },
                 orderBy: {
-                    firstName: 'asc'
+                    lastName: 'asc'
                 }
             }),
             prisma.user.count({ where: whereClause })
