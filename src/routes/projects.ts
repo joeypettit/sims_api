@@ -1,10 +1,10 @@
 import express from "express";
-const router = express.Router();
 import prisma from "../../prisma/prisma-client";
 import { removeKeysWhereUndefined, simulateNetworkLatency } from "../util";
 import { ProjectsService } from "../services/projects-service";
 import { isAuthenticated } from "../middleware/auth";
 
+const router = express.Router();
 const projectsService = new ProjectsService();
 
 // Apply isAuthenticated to all routes
@@ -40,6 +40,7 @@ router.get("/get-by-id/:projectId", async (req, res) => {
   });
   res.send(result);
 });
+
 router.post("/create-blank", async (req, res) => {
   const { name } = req.body;
   try {
@@ -51,7 +52,7 @@ router.post("/create-blank", async (req, res) => {
           create: [{ firstName: "", lastName: "" }]
         },
         users: { 
-          connect: []
+          connect: [{ id: req.user.id }]
         },
       },
     });
@@ -59,64 +60,6 @@ router.post("/create-blank", async (req, res) => {
   } catch (error) {
     console.error("Error creating new project:", error);
     res.status(500).json({ error: "An error occurred while creating new project" });
-  }
-});
-
-router.put("/:projectId", async (req, res) => {
-
-  const {
-    name,
-    clientFirstName,
-    clientLastName,
-    clientId,
-    salesPersonFirstName,
-    salesPersonLastName,
-    salesPersonId,
-    description,
-  } = req.body;
-  const { projectId } = req.params;
-
-  let projectDataObj: any = {
-    name,
-    description,
-  };
-  if (clientFirstName || clientLastName) {
-    projectDataObj.clients = {
-      update: {
-        where: {
-          id: clientId,
-        },
-        data: {
-          firstName: clientFirstName,
-          lastName: clientLastName,
-        },
-      },
-    };
-  }
-  if (salesPersonFirstName || salesPersonLastName) {
-    projectDataObj.users = {
-      update: {
-        where: {
-          id: salesPersonId,
-        },
-        data: {
-          firstName: salesPersonFirstName,
-          lastName: salesPersonLastName,
-        },
-      },
-    };
-  }
-  projectDataObj = removeKeysWhereUndefined(projectDataObj);
-
-  try {
-    const updatedLineItem = await prisma.project.update({
-      where: { id: projectId },
-      data: projectDataObj,
-    });
-    res.status(200).json(updatedLineItem);
-  } catch (error) {
-    console.error("Error updating project:", error);
-    res.status(500).json({ error: "An error occurred while updating project" });
   }
 });
 
@@ -132,6 +75,53 @@ router.get("/search", async (req, res) => {
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: "Error searching projects" });
+  }
+});
+
+// Add user to project
+router.post("/:projectId/users", isAuthenticated, async (req, res) => {
+  const { projectId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const updatedProject = await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        users: {
+          connect: { id: userId }
+        }
+      },
+      include: {
+        users: true
+      }
+    });
+    res.json(updatedProject);
+  } catch (error) {
+    console.error("Error adding user to project:", error);
+    res.status(500).json({ error: "Failed to add user to project" });
+  }
+});
+
+// Remove user from project
+router.delete("/:projectId/users/:userId", isAuthenticated, async (req, res) => {
+  const { projectId, userId } = req.params;
+
+  try {
+    const updatedProject = await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        users: {
+          disconnect: { id: userId }
+        }
+      },
+      include: {
+        users: true
+      }
+    });
+    res.json(updatedProject);
+  } catch (error) {
+    console.error("Error removing user from project:", error);
+    res.status(500).json({ error: "Failed to remove user from project" });
   }
 });
 

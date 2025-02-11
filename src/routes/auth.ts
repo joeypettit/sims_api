@@ -4,7 +4,7 @@ import prisma from '../../prisma/prisma-client';
 import passport from 'passport';
 import { hashPassword } from '../../auth/password-utils';
 import { isAuthenticated, isAdmin } from '../middleware/auth';
-import { User, UserRole } from '@prisma/client';
+import { User, UserRole, Prisma } from '@prisma/client';
 
 const router = Router();
 
@@ -149,6 +149,72 @@ router.post('/logout', (req, res) => {
     req.logout(() => {
         res.json({ message: 'Logged out successfully' });
     });
+});
+
+// Search users
+router.get('/users/search', isAuthenticated, async (req: Request, res: Response) => {
+    console.log('Searching users with query:', req.query.query);
+    console.log('Request user:', req.user);
+    try {
+        const query = (req.query.query as string) || '';
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const skip = (page - 1) * limit;
+
+        // First, let's check how many total users exist
+        const totalUsers = await prisma.user.count();
+        console.log('Total users in system:', totalUsers);
+
+        const whereClause: Prisma.UserWhereInput = {
+            OR: [
+                { firstName: { contains: query, mode: Prisma.QueryMode.insensitive } },
+                { lastName: { contains: query, mode: Prisma.QueryMode.insensitive } },
+                { userAccount: { email: { contains: query, mode: Prisma.QueryMode.insensitive } } }
+            ]
+        };
+
+        const [users, total] = await Promise.all([
+            prisma.user.findMany({
+                where: whereClause,
+                skip,
+                take: limit,
+                include: {
+                    userAccount: {
+                        select: {
+                            id: true,
+                            email: true,
+                            role: true,
+                            isBlocked: true
+                        }
+                    }
+                },
+                orderBy: {
+                    firstName: 'asc'
+                }
+            }),
+            prisma.user.count({ where: whereClause })
+        ]);
+
+        console.log(`Found ${users.length} users matching query "${query}"`);
+        console.log('Users found:', users.map(u => ({
+            id: u.id,
+            name: `${u.firstName} ${u.lastName}`,
+            email: u.userAccount?.email,
+            role: u.userAccount?.role
+        })));
+        
+        res.json({
+            users,
+            pagination: {
+                total,
+                pages: Math.ceil(total / limit),
+                currentPage: page
+            }
+        });
+    } catch (error) {
+        console.error('Error searching users:', error);
+        res.status(500).json({ error: 'Error searching users' });
+    }
 });
 
 // Get all users (admin only)
