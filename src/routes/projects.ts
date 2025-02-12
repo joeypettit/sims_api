@@ -181,4 +181,17 @@ router.delete("/:projectId/clients/:clientId", isAuthenticated, async (req, res)
   }
 });
 
+// Add the cost range endpoint
+router.get("/:projectId/cost-range", async (req, res) => {
+  const { projectId } = req.params;
+
+  try {
+    const costRange = await projectsService.calculateProjectCostRange(projectId);
+    res.json(costRange);
+  } catch (error) {
+    console.error("Error getting project cost range:", error);
+    res.status(500).json({ error: "Failed to calculate project cost range" });
+  }
+});
+
 export default router;

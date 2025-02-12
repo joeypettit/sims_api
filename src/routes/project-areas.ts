@@ -68,4 +68,27 @@ router.get("/:areaId", async (req, res) => {
   }
 });
 
+router.get("/:areaId/cost-range", async (req, res) => {
+  const { areaId } = req.params;
+
+  try {
+    const costRange = await projectAreaService.calculateAreaCostRange(areaId);
+    res.json(costRange);
+  } catch (error) {
+    console.error("Error getting area cost range:", error);
+    res.status(500).json({ error: "Failed to calculate area cost range" });
+  }
+});
+
+router.delete("/:areaId", async (req, res) => {
+  const { areaId } = req.params;
+  try {
+    const deletedArea = await projectAreaService.deleteArea({ areaId });
+    res.status(200).json(deletedArea);
+  } catch (error) {
+    console.error(`Error deleting Project Area with id ${areaId}:`, error);
+    res.status(500).json({ error: "Error deleting Project Area" });
+  }
+});
+
 export default router;

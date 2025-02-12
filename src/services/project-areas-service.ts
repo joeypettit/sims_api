@@ -5,6 +5,7 @@ import { UpdatedItem } from "../utility/project-sort";
 import { groupByValue, reindexEntitiesInArray } from "../utility/project-sort";
 import prisma from "../../prisma/prisma-client";
 import ProjectAreaRepo, { ProjectAreaWithGroups } from "../repository/project-area-repo";
+import { PriceRange } from "../types/price-range";
 
 const lineItemService = new LineItemsService()
 const groupService = new GroupsService()
@@ -231,6 +232,116 @@ export class ProjectAreasService {
     
 
     return newArea;
+  }
+
+  async deleteArea({ areaId }: { areaId: string }) {
+    try {
+      // With onDelete: Cascade set up, deleting the project area will automatically
+      // delete all associated LineItemGroups, which will delete all LineItems,
+      // which will delete all LineItemOptions
+      const deletedArea = await prisma.projectArea.delete({
+        where: {
+          id: areaId
+        }
+      });
+
+      return deletedArea;
+    } catch (error) {
+      console.error("Error deleting project area:", error);
+      throw new Error(`Error deleting project area: ${error}`);
+    }
+  }
+
+  async calculateAreaCostRange(areaId: string): Promise<PriceRange> {
+    try {
+      // Get the project area with its line item groups and line items
+      const area = await prisma.projectArea.findUnique({
+        where: { id: areaId },
+        include: {
+          lineItemGroups: {
+            include: {
+              lineItems: {
+                include: {
+                  lineItemOptions: true
+                }
+              }
+            }
+          }
+        }
+      });
+
+      if (!area) {
+        throw new Error(`Project area with ID ${areaId} not found`);
+      }
+
+      // Initialize total price range
+      const totalPriceRange: PriceRange = {
+        lowPriceInDollars: 0,
+        highPriceInDollars: 0
+      };
+
+      // Calculate total for each group
+      for (const group of area.lineItemGroups) {
+        for (const lineItem of group.lineItems) {
+          // Find the selected option
+          const selectedOption = lineItem.lineItemOptions.find(option => option.isSelected);
+          if (!selectedOption) continue;
+
+          // Calculate price based on option type (exact or range)
+          if (selectedOption.exactCostInDollarsPerUnit !== null) {
+            const totalPrice = this.calculateTotalPrice({
+              costPerUnit: selectedOption.exactCostInDollarsPerUnit,
+              quantity: lineItem.quantity,
+              marginDecimal: lineItem.marginDecimal,
+              priceAdjustmentMultiplier: selectedOption.priceAdjustmentMultiplier || 1
+            });
+            totalPriceRange.lowPriceInDollars += totalPrice;
+            totalPriceRange.highPriceInDollars += totalPrice;
+          } else if (selectedOption.lowCostInDollarsPerUnit && selectedOption.highCostInDollarsPerUnit) {
+            const lowPrice = this.calculateTotalPrice({
+              costPerUnit: selectedOption.lowCostInDollarsPerUnit,
+              quantity: lineItem.quantity,
+              marginDecimal: lineItem.marginDecimal,
+              priceAdjustmentMultiplier: selectedOption.priceAdjustmentMultiplier || 1
+            });
+            const highPrice = this.calculateTotalPrice({
+              costPerUnit: selectedOption.highCostInDollarsPerUnit,
+              quantity: lineItem.quantity,
+              marginDecimal: lineItem.marginDecimal,
+              priceAdjustmentMultiplier: selectedOption.priceAdjustmentMultiplier || 1
+            });
+            totalPriceRange.lowPriceInDollars += lowPrice;
+            totalPriceRange.highPriceInDollars += highPrice;
+          }
+        }
+      }
+
+      // Round to whole dollars
+      totalPriceRange.lowPriceInDollars = Math.ceil(totalPriceRange.lowPriceInDollars);
+      totalPriceRange.highPriceInDollars = Math.ceil(totalPriceRange.highPriceInDollars);
+
+      return totalPriceRange;
+    } catch (error) {
+      console.error("Error calculating area cost range:", error);
+      throw new Error(`Error calculating area cost range: ${error}`);
+    }
+  }
+
+  private calculateTotalPrice({
+    costPerUnit,
+    quantity,
+    marginDecimal,
+    priceAdjustmentMultiplier
+  }: {
+    costPerUnit: number;
+    quantity: number;
+    marginDecimal: number;
+    priceAdjustmentMultiplier: number;
+  }): number {
+    // Calculate sale price per unit using the margin formula
+    const salePricePerUnit = (costPerUnit / (1 - marginDecimal)) * priceAdjustmentMultiplier;
+    // Calculate total price
+    return salePricePerUnit * quantity;
   }
 
 }

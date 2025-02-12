@@ -81,7 +81,7 @@ model LineItem {
   indexInGroup    Int              @default(0)
   lineItemOptions LineItemOption[]
   lineItemGroupId String
-  lineItemGroup   LineItemGroup    @relation(fields: [lineItemGroupId], references: [id])
+  lineItemGroup   LineItemGroup    @relation(fields: [lineItemGroupId], references: [id], onDelete: Cascade)
 }
 
 model LineItemUnit {
@@ -108,7 +108,7 @@ model LineItemGroup {
   id              String        @id @default(uuid())
   name            String
   projectAreaId   String
-  projectArea     ProjectArea   @relation(fields: [projectAreaId], references: [id])
+  projectArea     ProjectArea   @relation(fields: [projectAreaId], references: [id], onDelete: Cascade)
   groupCategoryId String
   groupCategory   GroupCategory @relation(fields: [groupCategoryId], references: [id])
   lineItems       LineItem[]
