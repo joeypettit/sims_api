@@ -1,4 +1,4 @@
-import bcryptjs from "bcryptjs";
+import bcryptjs from 'bcryptjs';
 
 export function validatePassword(password: string, passwordHash: string): Promise<boolean> {
   return bcryptjs.compare(password, passwordHash);
@@ -16,4 +16,4 @@ export function generateSimplePassword(length: number = 8): string {
     password += charset[randomIndex];
   }
   return password;
-}
+} 

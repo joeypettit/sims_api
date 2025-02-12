@@ -37,12 +37,15 @@ const verifyCallback = async (username: string, password: string, done: any) => 
             return done(null, false, { message: 'User profile not found' });
         }
 
-        // Return the user with role information
+        // Return the user with all required userAccount fields
         return done(null, {
             ...userAccount.user,
             userAccount: {
+                id: userAccount.id,
                 email: userAccount.email,
-                role: userAccount.role
+                role: userAccount.role,
+                isBlocked: userAccount.isBlocked,
+                isTemporaryPassword: userAccount.isTemporaryPassword
             }
         });
     } catch (error) {
@@ -58,20 +61,26 @@ passport.serializeUser((user: any, done) => {
     done(null, { 
         id: user.id,
         userAccount: {
-            role: user.userAccount.role
+            id: user.userAccount.id,
+            role: user.userAccount.role,
+            isBlocked: user.userAccount.isBlocked,
+            isTemporaryPassword: user.userAccount.isTemporaryPassword
         }
     });
 });
 
-passport.deserializeUser(async (serializedUser: { id: string, userAccount: { role: UserRole } }, done) => {
+passport.deserializeUser(async (serializedUser: { id: string, userAccount: { id: string, role: UserRole, isBlocked: boolean, isTemporaryPassword: boolean } }, done) => {
     try {
         const user = await prisma.user.findUnique({
             where: { id: serializedUser.id },
             include: {
                 userAccount: {
                     select: {
+                        id: true,
                         email: true,
-                        role: true
+                        role: true,
+                        isBlocked: true,
+                        isTemporaryPassword: true
                     }
                 }
             }

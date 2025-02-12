@@ -4,9 +4,23 @@ import prisma from '../../prisma/prisma-client';
 import passport from 'passport';
 import { hashPassword } from '../../auth/password-utils';
 import { isAuthenticated, isAdmin } from '../middleware/auth';
-import { User, UserRole, Prisma } from '@prisma/client';
+import { User, UserAccount, UserRole, Prisma } from '@prisma/client';
+import { AuthService } from '../services/auth-service';
+
+// Define custom type for authenticated request user
+type AuthenticatedUser = User & {
+    userAccount?: Pick<UserAccount, 'id' | 'email' | 'role' | 'isBlocked' | 'isTemporaryPassword'>;
+};
+
+// Extend Express Request type
+declare global {
+    namespace Express {
+        interface User extends AuthenticatedUser {}
+    }
+}
 
 const router = Router();
+const authService = new AuthService(prisma);
 
 router.use((req, res, next)=>{
     console.log('auth request');
@@ -36,46 +50,38 @@ router.post('/create-user', isAuthenticated, isAdmin, async (req: Request, res: 
             return;
         }
 
-        // Check if user already exists
-        const existingUser = await prisma.userAccount.findUnique({
-            where: { email }
+        const userAccount = await authService.register({
+            email,
+            password,
+            firstName,
+            lastName,
+            role
         });
 
-        if (existingUser) {
-            res.status(400).json({ error: 'User with this email already exists' });
-            return;
-        }
-
-        const hashedPassword = await hashPassword(password);
-        const userAccount = await prisma.userAccount.create({
-            data: { 
-                email, 
-                passwordHash: hashedPassword,
-                role,
-                user: { 
-                    create: { 
-                        firstName, 
-                        lastName 
-                    } 
-                } 
-            },
-            include: {
-                user: true
-            }
-        });
-        res.status(201).json({ 
+        res.status(201).json({
             message: 'User created successfully',
             user: {
                 id: userAccount.user?.id,
                 firstName: userAccount.user?.firstName,
                 lastName: userAccount.user?.lastName,
                 email: userAccount.email,
-                role: userAccount.role
+                role: userAccount.role,
+                userAccount: {
+                    id: userAccount.id,
+                    email: userAccount.email,
+                    role: userAccount.role,
+                    isBlocked: userAccount.isBlocked,
+                    isTemporaryPassword: userAccount.isTemporaryPassword
+                }
             }
         });
     } catch (error) {
-        console.error('Error creating user account:', error);
-        res.status(500).json({ error: 'Error creating user account' });
+        if (error instanceof Error && error.message === 'User with this email already exists') {
+            res.status(400).json({ error: error.message });
+        } else {
+            console.error('Error creating user account:', error);
+            res.status(500).json({ error: 'Error creating user account' });
+        }
     }
 });
 
@@ -132,7 +138,11 @@ router.delete('/users/:userId', isAuthenticated, isAdmin, async (req: Request, r
 
 // Login
 router.post('/login', passport.authenticate('local'), (req, res) => {
-    res.json({ message: 'Logged in successfully' });
+    if (req.user) {
+        res.json(req.user);
+    } else {
+        res.status(401).json({ error: 'Authentication failed' });
+    }
 });
 
 // Get current user
@@ -404,6 +414,60 @@ router.patch('/users/:userAccountId/toggle-block', isAuthenticated, isAdmin, asy
     } catch (error) {
         console.error('Error toggling user blocked status:', error);
         res.status(500).json({ error: 'Error toggling user blocked status' });
+    }
+});
+
+router.post('/change-password', isAuthenticated, async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user?.userAccount?.id;
+
+    if (!userId) {
+        res.status(401).json({ error: 'Not authenticated' });
+        return;
+    }
+
+    try {
+        await authService.changePassword(userId, currentPassword, newPassword);
+        res.json({ message: 'Password changed successfully' });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(400).json({ error: error.message });
+        } else {
+            res.status(400).json({ error: 'An unknown error occurred' });
+        }
+    }
+});
+
+// Reset user password (admin only)
+router.post('/users/:userAccountId/reset-password', isAuthenticated, isAdmin, async (req, res) => {
+    const { userAccountId } = req.params;
+
+    try {
+        const userAccount = await prisma.userAccount.findUnique({
+            where: { id: userAccountId },
+            include: { user: true }
+        });
+
+        if (!userAccount) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+
+        // Prevent resetting password of super admin users
+        if (userAccount.role === UserRole.SUPER_ADMIN) {
+            res.status(403).json({ error: 'Super admin passwords cannot be reset' });
+            return;
+        }
+
+        const temporaryPassword = await authService.resetUserPassword(userAccountId);
+
+        res.json({ 
+            message: 'Password reset successfully',
+            temporaryPassword
+        });
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        res.status(500).json({ error: 'Error resetting password' });
     }
 });
 
