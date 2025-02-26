@@ -14,6 +14,12 @@ export const lineItemOptionFullSelect = {
 export const lineItemFullSelect = {
   include: {
     lineItemOptions: lineItemOptionFullSelect,
+    unit: {
+      select: {
+        id: true,
+        name: true
+      }
+    }
   }
 }
 

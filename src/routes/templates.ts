@@ -127,4 +127,20 @@ router.post("/area/create", async (req, res) => {
   }
   res.json(newTemplate);
 });
+
+router.delete('/area/:templateId', async (req, res) => {
+  try {
+    const { templateId } = req.params;
+    
+    await prisma.areaTemplate.delete({
+      where: { id: templateId }
+    });
+    
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting template:', error);
+    res.status(500).json({ error: 'Failed to delete template' });
+  }
+});
+
 export default router;

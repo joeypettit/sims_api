@@ -19,6 +19,8 @@ router.get("/", async (req, res) => {
       name: true,
       users: true,
       id: true,
+      startDate: true,
+      endDate: true,
     },
   });
   res.send(result);
@@ -37,13 +39,15 @@ router.get("/get-by-id/:projectId", async (req, res) => {
       name: true,
       users: true,
       id: true,
+      startDate: true,
+      endDate: true,
     },
   });
   res.send(result);
 });
 
 router.post("/create-blank", async (req, res) => {
-  const { name, userId } = req.body;
+  const { name, userId, startDate, endDate } = req.body;
   if (!userId) {
     res.status(400).json({ error: "User ID is required" });
     return;
@@ -57,9 +61,8 @@ router.post("/create-blank", async (req, res) => {
       data: {
         name: name,
         description: "",
-        clients: { 
-          create: [{ firstName: "", lastName: "" }]
-        },
+        startDate: startDate ? new Date(startDate) : null,
+        endDate: endDate ? new Date(endDate) : null,
         users: { 
           connect: [{ id: userId }]
         },
@@ -191,6 +194,37 @@ router.get("/:projectId/cost-range", async (req, res) => {
   } catch (error) {
     console.error("Error getting project cost range:", error);
     res.status(500).json({ error: "Failed to calculate project cost range" });
+  }
+});
+
+router.patch('/:id/dates', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+    const projectId = req.params.id;
+    
+    const updatedProject = await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        startDate: startDate ? new Date(startDate) : null,
+        endDate: endDate ? new Date(endDate) : null
+      }
+    });
+
+    res.json(updatedProject);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update project dates' });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    await prisma.project.delete({
+      where: { id: projectId }
+    });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete project' });
   }
 });
 

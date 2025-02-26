@@ -58,18 +58,20 @@ model Project {
   id          String        @id @default(uuid())
   name        String
   description String
+  startDate   DateTime?
+  endDate     DateTime?
   clients     Client[]
   users       User[]
   areas       ProjectArea[]
 }
 
 model ProjectArea {
-  id             String          @id @default(uuid())
-  name           String?
-  projectId      String?
-  project        Project?        @relation(fields: [projectId], references: [id])
-  lineItemGroups LineItemGroup[]
-  template       AreaTemplate?
+  id              String        @id @default(uuid())
+  name            String?
+  projectId       String?
+  project         Project?      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  lineItemGroups  LineItemGroup[]
+  areaTemplate    AreaTemplate?
 }
 
 model LineItem {
@@ -134,7 +136,7 @@ model AreaTemplate {
   id            String      @id @default(uuid())
   name          String
   projectAreaId String      @unique
-  projectArea   ProjectArea @relation(fields: [projectAreaId], references: [id])
+  projectArea   ProjectArea @relation(fields: [projectAreaId], references: [id], onDelete: Cascade)
 }
 
 model Session {

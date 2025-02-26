@@ -44,4 +44,33 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.delete("/:unitId", async (req, res) => {
+  const { unitId } = req.params;
+
+  try {
+    // Check if the unit is being used by any line items
+    const lineItemsUsingUnit = await prisma.lineItem.findFirst({
+      where: {
+        unitId: unitId
+      }
+    });
+
+    if (lineItemsUsingUnit) {
+      res.status(400).json({ error: "Cannot delete unit as it is being used by line items" });
+      return;
+    }
+
+    await prisma.lineItemUnit.delete({
+      where: {
+        id: unitId
+      }
+    });
+
+    res.status(200).json({ message: "Unit deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting unit:", error);
+    res.status(500).json({ error: "An error occurred while deleting the unit" });
+  }
+});
+
 export default router;
