@@ -76,17 +76,29 @@ router.post("/create-blank", async (req, res) => {
 });
 
 router.get("/search", async (req, res) => {
-  const { query, page, limit } = req.query;
-
   try {
-    const result = await projectsService.search({
-      query: query as string,
-      page: page as string,
-      limit: limit as string
+    const { query = '', page = '1', limit = '10' } = req.query;
+    const userId = req.user!.id;  // Get the current user's ID
+    
+    const skip = (Number(page) - 1) * Number(limit);
+    const result = await projectsService.searchProjects({ 
+      query: query as string, 
+      skip, 
+      limit: Number(limit),
+      userId  // Pass the userId to the service
     });
-    res.json(result);
+
+    res.json({
+      projects: result.projects,
+      pagination: {
+        total: result.total,
+        pages: Math.ceil(result.total / Number(limit)),
+        currentPage: Number(page)
+      }
+    });
   } catch (error) {
-    res.status(500).json({ error: "Error searching projects" });
+    console.error('Error searching projects:', error);
+    res.status(500).json({ error: 'Failed to search projects' });
   }
 });
 
@@ -225,6 +237,82 @@ router.delete('/:id', async (req, res) => {
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete project' });
+  }
+});
+
+router.post('/:projectId/star', async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user!.id;
+    
+    const star = await projectsService.starProject(userId, projectId);
+    res.json(star);
+  } catch (error) {
+    console.error('Error starring project:', error);
+    res.status(500).json({ error: 'Failed to star project' });
+  }
+});
+
+router.delete('/:projectId/star', async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user!.id;
+    
+    await projectsService.unstarProject(userId, projectId);
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error unstarring project:', error);
+    res.status(500).json({ error: 'Failed to unstar project' });
+  }
+});
+
+router.get('/:projectId/star', async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user!.id;
+    
+    const isStarred = await projectsService.isProjectStarred(userId, projectId);
+    res.json({ isStarred });
+  } catch (error) {
+    console.error('Error checking project star status:', error);
+    res.status(500).json({ error: 'Failed to check star status' });
+  }
+});
+
+router.get('/starred', async (req, res) => {
+  try {
+    const userId = req.user!.id;
+    const projects = await projectsService.getStarredProjects(userId);
+    res.json(projects);
+  } catch (error) {
+    console.error('Error getting starred projects:', error);
+    res.status(500).json({ error: 'Failed to get starred projects' });
+  }
+});
+
+router.get('/my-projects', async (req, res) => {
+  try {
+    const { query = '', page = '1', limit = '10' } = req.query;
+    const userId = req.user!.id;
+    
+    const result = await projectsService.searchMyProjects({ 
+      query: query as string, 
+      skip: (Number(page) - 1) * Number(limit),
+      limit: Number(limit),
+      userId
+    });
+
+    res.json({
+      projects: result.projects,
+      pagination: {
+        total: result.total,
+        pages: Math.ceil(result.total / Number(limit)),
+        currentPage: Number(page)
+      }
+    });
+  } catch (error) {
+    console.error('Error getting my projects:', error);
+    res.status(500).json({ error: 'Failed to get my projects' });
   }
 });
 

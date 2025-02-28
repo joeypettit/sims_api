@@ -91,4 +91,74 @@ export class ProjectsService {
     // Calculate total price
     return salePricePerUnit * quantity;
   }
+
+  async starProject(userId: string, projectId: string) {
+    try {
+      return await projectsRepo.starProject(userId, projectId);
+    } catch (error) {
+      throw new Error(`Error starring project: ${error}`);
+    }
+  }
+
+  async unstarProject(userId: string, projectId: string) {
+    try {
+      return await projectsRepo.unstarProject(userId, projectId);
+    } catch (error) {
+      throw new Error(`Error unstarring project: ${error}`);
+    }
+  }
+
+  async isProjectStarred(userId: string, projectId: string) {
+    try {
+      return await projectsRepo.isProjectStarred(userId, projectId);
+    } catch (error) {
+      throw new Error(`Error checking project star status: ${error}`);
+    }
+  }
+
+  async getStarredProjects(userId: string) {
+    try {
+      return await projectsRepo.getStarredProjects(userId);
+    } catch (error) {
+      throw new Error(`Error getting starred projects: ${error}`);
+    }
+  }
+
+  async searchProjects({ query, skip, limit, userId }: { query: string, skip: number, limit: number, userId: string }) {
+    try {
+      const { projects, total } = await projectsRepo.search({ query, skip, limit });
+      
+      // Transform projects to include isStarred boolean
+      const transformedProjects = projects.map(project => ({
+        ...project,
+        isStarred: project.stars.some(star => star.userId === userId)
+      }));
+
+      return { 
+        projects: transformedProjects,
+        total 
+      };
+    } catch (error) {
+      throw new Error(`Error searching projects: ${error}`);
+    }
+  }
+
+  async searchMyProjects({ query, skip, limit, userId }: { query: string, skip: number, limit: number, userId: string }) {
+    try {
+      const { projects, total } = await projectsRepo.searchMyProjects({ query, skip, limit, userId });
+      
+      // Transform projects to include isStarred boolean
+      const transformedProjects = projects.map(project => ({
+        ...project,
+        isStarred: project.stars.some(star => star.userId === userId)
+      }));
+
+      return { 
+        projects: transformedProjects,
+        total 
+      };
+    } catch (error) {
+      throw new Error(`Error searching my projects: ${error}`);
+    }
+  }
 } 
