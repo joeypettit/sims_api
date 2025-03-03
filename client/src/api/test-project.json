@@ -1,0 +1,132 @@
+[
+    {
+      "id": "proj001",
+      "client": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "phoneNumber": {
+          "countryCode": "+1",
+          "areaCode": "218",
+          "number": "5551234",
+          "extension": "123",
+          "type": "work"
+        },
+        "addressPrimary": {
+          "addressLine1": "123 Main St",
+          "addressLine2": "Apt 4B",
+          "city": "Moorhead",
+          "state": "MN",
+          "zipCode": "56560",
+          "type": "shipping"
+        },
+        "addressBilling": {
+          "addressLine1": "456 Oak St",
+          "addressLine2": "Suite 500",
+          "city": "Fargo",
+          "state": "ND",
+          "zipCode": "58102",
+          "type": "billing"
+        }
+      },
+      "name": "Doe Family Summer Home Refresh",
+      "startDate": "2024-09-19",
+      "endDate": "2024-12-15",
+      "projectAreas": [
+        {
+          "id": "area1",
+          "name": "Kitchen Remodel"
+        },
+        {
+          "id": "area2",
+          "name": "Master Bathroom"
+        }
+      ]
+    },
+    {
+      "id": "proj002",
+      "client": {
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "phoneNumber": {
+          "countryCode": "+1",
+          "areaCode": "612",
+          "number": "5556789",
+          "extension": "456",
+          "type": "cell"
+        },
+        "addressPrimary": {
+          "addressLine1": "789 Maple St",
+          "addressLine2": "Apt 2A",
+          "city": "Minneapolis",
+          "state": "MN",
+          "zipCode": "55401",
+          "type": "shipping"
+        },
+        "addressBilling": {
+          "addressLine1": "321 Oak St",
+          "addressLine2": "",
+          "city": "Minneapolis",
+          "state": "MN",
+          "zipCode": "55403",
+          "type": "billing"
+        }
+      },
+      "name": "Smith Condo Renovation",
+      "startDate": "2024-08-01",
+      "endDate": "2024-11-30",
+      "projectAreas": [
+        {
+          "id": "area3",
+          "name": "Living Room Redesign"
+        },
+        {
+          "id": "area4",
+          "name": "Kitchen Update"
+        }
+      ]
+    },
+    {
+      "id": "proj003",
+      "client": {
+        "firstName": "Michael",
+        "lastName": "Johnson",
+        "phoneNumber": {
+          "countryCode": "+1",
+          "areaCode": "507",
+          "number": "5559876",
+          "extension": "789",
+          "type": "home"
+        },
+        "addressPrimary": {
+          "addressLine1": "456 Birch Rd",
+          "addressLine2": "",
+          "city": "Rochester",
+          "state": "MN",
+          "zipCode": "55901",
+          "type": "shipping"
+        },
+        "addressBilling": {
+          "addressLine1": "456 Birch Rd",
+          "addressLine2": "",
+          "city": "Rochester",
+          "state": "MN",
+          "zipCode": "55901",
+          "type": "billing"
+        }
+      },
+      "name": "Johnson Lake Cabin Restoration",
+      "startDate": "2024-06-15",
+      "endDate": "2024-09-01",
+      "projectAreas": [
+        {
+          "id": "area5",
+          "name": "Deck Expansion"
+        },
+        {
+          "id": "area6",
+          "name": "Basement Renovation"
+        }
+      ]
+    }
+  ]
+  

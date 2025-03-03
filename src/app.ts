@@ -13,6 +13,7 @@ import passport from "passport";
 import prisma from "../prisma/prisma-client";
 import { PrismaSessionStore } from "../prisma/prisma-session-store";
 import '../auth/passport';
+import path from 'path';
 
 const app = express();
 const port = 3000;
@@ -49,6 +50,14 @@ app.use("/api/units", unitsRoutes);
 app.use("/api/options", optionsRoutes);
 app.use("/api/project-areas", areasRoutes);
 app.use("/api/clients", clientsRoutes);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/dist')));
+  
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  });
+}
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

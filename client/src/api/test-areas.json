@@ -1,0 +1,739 @@
+{
+  "area1": {
+    "id": "area1",
+    "name": "Kitchen Remodel",
+    "lineItemGroups": [
+      {
+        "id": "group004",
+        "name": "Countertops",
+        "lineItems": [
+          {
+            "id": "item007",
+            "name": "Countertops",
+            "quantity": 1,
+            "unit": "slabs",
+            "productOptions": [
+              {
+                "id": "option019",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 3000,
+                  "highPriceInDollars": 6000
+                },
+                "description": "Luxury granite countertops with custom edges.",
+                "productTier": 3,
+                "isSelected": true
+              },
+              {
+                "id": "option020",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 4500,
+                  "highPriceInDollars": 7000
+                },
+                "description": "Premier quartz countertops with polished finish.",
+                "productTier": 1,
+                "isSelected": false
+              },
+              {
+                "id": "option021",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 4000,
+                  "highPriceInDollars": 6000
+                },
+                "description": "Designer marble countertops with custom patterns.",
+                "productTier": 2,
+                "isSelected": false
+              }
+            ]
+          },
+          {
+            "id": "item008",
+            "name": "Backsplash",
+            "quantity": 1,
+            "unit": "sheets",
+            "productOptions": [
+              {
+                "id": "option022",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1000,
+                  "highPriceInDollars": 2000
+                },
+                "description": "Premier glass tile backsplash.",
+                "productTier": 1,
+                "isSelected": true
+              },
+              {
+                "id": "option023",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1500,
+                  "highPriceInDollars": 2500
+                },
+                "description": "Luxury designer tile backsplash with custom grout.",
+                "productTier": 3,
+                "isSelected": false
+              },
+              {
+                "id": "option024",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1200,
+                  "highPriceInDollars": 1800
+                },
+                "description": "Designer ceramic backsplash with custom designs.",
+                "productTier": 2,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "group001",
+        "name": "Cabinets",
+        "lineItems": [
+          {
+            "id": "item001",
+            "name": "Cabinets",
+            "quantity": 12,
+            "unit": "pieces",
+            "productOptions": [
+              {
+                "id": "option001",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 3000,
+                  "highPriceInDollars": 5000
+                },
+                "description": "Premier line of custom cabinets.",
+                "productTier": 1,
+                "isSelected": false
+              },
+              {
+                "id": "option002",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 4000,
+                  "highPriceInDollars": 6000
+                },
+                "description": "Luxury line with wood finish.",
+                "productTier": 3,
+                "isSelected": true
+              },
+              {
+                "id": "option003",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 3500,
+                  "highPriceInDollars": 4500
+                },
+                "description": "Designer cabinets with modern handles.",
+                "productTier": 2,
+                "isSelected": false
+              }
+            ]
+          },
+          {
+            "id": "item002",
+            "name": "Hardware",
+            "quantity": 24,
+            "unit": "pieces",
+            "productOptions": [
+              {
+                "id": "option004",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 200,
+                  "highPriceInDollars": 400
+                },
+                "description": "Premier cabinet hardware with modern finish.",
+                "productTier": 1,
+                "isSelected": true
+              },
+              {
+                "id": "option005",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 400,
+                  "highPriceInDollars": 600
+                },
+                "description": "Luxury designer hardware for cabinetry.",
+                "productTier": 3,
+                "isSelected": false
+              },
+              {
+                "id": "option006",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 300,
+                  "highPriceInDollars": 450
+                },
+                "description": "Designer hardware with chrome finish.",
+                "productTier": 2,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "area2": {
+    "id": "area2",
+    "name": "Master Bathroom",
+    "lineItemGroups": [
+      {
+        "id": "group003",
+        "name": "Windows",
+        "lineItems": [
+          {
+            "id": "item005",
+            "name": "Windows",
+            "quantity": 4,
+            "unit": "pieces",
+            "productOptions": [
+              {
+                "id": "option013",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 2000,
+                  "highPriceInDollars": 4000
+                },
+                "description": "Premier energy-efficient windows.",
+                "productTier": 1,
+                "isSelected": false
+              },
+              {
+                "id": "option014",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 3500,
+                  "highPriceInDollars": 5000
+                },
+                "description": "Luxury soundproof windows with UV protection.",
+                "productTier": 3,
+                "isSelected": false
+              },
+              {
+                "id": "option015",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 3000,
+                  "highPriceInDollars": 4500
+                },
+                "description": "Designer windows with frost protection.",
+                "productTier": 2,
+                "isSelected": false
+              }
+            ]
+          },
+          {
+            "id": "item006",
+            "name": "Curtains",
+            "quantity": 4,
+            "unit": "pieces",
+            "productOptions": [
+              {
+                "id": "option016",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 500,
+                  "highPriceInDollars": 800
+                },
+                "description": "Premier blackout curtains.",
+                "productTier": 1,
+                "isSelected": true
+              },
+              {
+                "id": "option017",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 700,
+                  "highPriceInDollars": 1000
+                },
+                "description": "Luxury designer curtains with velvet finish.",
+                "productTier": 3,
+                "isSelected": false
+              },
+              {
+                "id": "option018",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 600,
+                  "highPriceInDollars": 900
+                },
+                "description": "Designer linen curtains with custom prints.",
+                "productTier": 2,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "group002",
+        "name": "Flooring",
+        "lineItems": [
+          {
+            "id": "item003",
+            "name": "Tile Flooring",
+            "quantity": 80,
+            "unit": "sq ft",
+            "productOptions": [
+              {
+                "id": "option007",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 0,
+                  "highPriceInDollars": 5000
+                },
+                "description": "Premier ceramic tiles with a polished finish.",
+                "productTier": 1,
+                "isSelected": false
+              },
+              {
+                "id": "option008",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 5000,
+                  "highPriceInDollars": 7000
+                },
+                "description": "Luxury ceramic tile flooring with marble pattern.",
+                "productTier": 3,
+                "isSelected": true
+              },
+              {
+                "id": "option009",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 4500,
+                  "highPriceInDollars": 5500
+                },
+                "description": "Designer tiles with matte finish.",
+                "productTier": 2,
+                "isSelected": false
+              }
+            ]
+          },
+          {
+            "id": "item004",
+            "name": "Subflooring",
+            "quantity": 100,
+            "unit": "sq ft",
+            "productOptions": [
+              {
+                "id": "option010",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1500,
+                  "highPriceInDollars": 2500
+                },
+                "description": "Moisture-resistant subflooring with soundproofing.",
+                "productTier": 1,
+                "isSelected": true
+              },
+              {
+                "id": "option011",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 2000,
+                  "highPriceInDollars": 3000
+                },
+                "description": "Luxury subflooring for heated floors.",
+                "productTier": 3,
+                "isSelected": false
+              },
+              {
+                "id": "option012",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1800,
+                  "highPriceInDollars": 2500
+                },
+                "description": "Designer-grade subflooring with easy installation.",
+                "productTier": 2,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "group005",
+        "name": "Permit",
+        "lineItems": [
+          {
+            "id": "item009",
+            "name": "Building Permit",
+            "quantity": 1,
+            "unit": "permit",
+            "productOptions": [
+              {
+                "id": "option025",
+                "exactPriceInDollarsPerUnit": 0,
+                "description": "Required building permit for project approval.",
+                "productTier": 1,
+                "isSelected": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "area3": {
+    "id": "area3",
+    "name": "Living Room Design",
+    "lineItemGroups": [
+      {
+        "id": "group006",
+        "name": "Sofa Set",
+        "lineItems": [
+          {
+            "id": "item010",
+            "name": "Sofa Set",
+            "quantity": 2,
+            "unit": "sets",
+            "productOptions": [
+              {
+                "id": "option026",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 2000,
+                  "highPriceInDollars": 3000
+                },
+                "description": "Modern leather sofa set.",
+                "productTier": 2,
+                "isSelected": true
+              },
+              {
+                "id": "option027",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 3000,
+                  "highPriceInDollars": 4000
+                },
+                "description": "Luxury fabric sofa with recliners.",
+                "productTier": 3,
+                "isSelected": false
+              },
+              {
+                "id": "option028",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1500,
+                  "highPriceInDollars": 2500
+                },
+                "description": "Affordable compact sofa set.",
+                "productTier": 1,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "group007",
+        "name": "Coffee Table",
+        "lineItems": [
+          {
+            "id": "item011",
+            "name": "Coffee Table",
+            "quantity": 1,
+            "unit": "pieces",
+            "productOptions": [
+              {
+                "id": "option029",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 500,
+                  "highPriceInDollars": 800
+                },
+                "description": "Designer glass top coffee table.",
+                "productTier": 2,
+                "isSelected": true
+              },
+              {
+                "id": "option030",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1000,
+                  "highPriceInDollars": 1500
+                },
+                "description": "Luxury wood coffee table with storage.",
+                "productTier": 3,
+                "isSelected": false
+              },
+              {
+                "id": "option031",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 300,
+                  "highPriceInDollars": 600
+                },
+                "description": "Simple modern coffee table.",
+                "productTier": 1,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "area4": {
+    "id": "area4",
+    "name": "Kitchen Update",
+    "lineItemGroups": [
+      {
+        "id": "group007",
+        "name": "Kitchen Cabinets",
+        "lineItems": [
+          {
+            "id": "item012",
+            "name": "Kitchen Cabinets",
+            "quantity": 10,
+            "unit": "pieces",
+            "productOptions": [
+              {
+                "id": "option032",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 4000,
+                  "highPriceInDollars": 6000
+                },
+                "description": "Custom oak kitchen cabinets.",
+                "productTier": 2,
+                "isSelected": true
+              },
+              {
+                "id": "option033",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 6000,
+                  "highPriceInDollars": 8000
+                },
+                "description": "Luxury kitchen cabinets with soft-close doors.",
+                "productTier": 3,
+                "isSelected": false
+              },
+              {
+                "id": "option034",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 3000,
+                  "highPriceInDollars": 4500
+                },
+                "description": "Basic kitchen cabinets with laminate finish.",
+                "productTier": 1,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "group008",
+        "name": "Kitchen Island",
+        "lineItems": [
+          {
+            "id": "item013",
+            "name": "Kitchen Island",
+            "quantity": 1,
+            "unit": "pieces",
+            "productOptions": [
+              {
+                "id": "option035",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 2000,
+                  "highPriceInDollars": 3500
+                },
+                "description": "Granite countertop kitchen island.",
+                "productTier": 3,
+                "isSelected": true
+              },
+              {
+                "id": "option036",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1500,
+                  "highPriceInDollars": 2500
+                },
+                "description": "Wooden kitchen island with storage.",
+                "productTier": 2,
+                "isSelected": false
+              },
+              {
+                "id": "option037",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1000,
+                  "highPriceInDollars": 2000
+                },
+                "description": "Basic kitchen island with wheels.",
+                "productTier": 1,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "area5": {
+    "id": "area5",
+    "name": "Deck Expansion",
+    "lineItemGroups": [
+      {
+        "id": "group008",
+        "name": "Deck Flooring",
+        "lineItems": [
+          {
+            "id": "item014",
+            "name": "Deck Flooring",
+            "quantity": 200,
+            "unit": "sq ft",
+            "productOptions": [
+              {
+                "id": "option038",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 3000,
+                  "highPriceInDollars": 5000
+                },
+                "description": "Premium composite deck flooring.",
+                "productTier": 3,
+                "isSelected": true
+              },
+              {
+                "id": "option039",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 2000,
+                  "highPriceInDollars": 4000
+                },
+                "description": "Pressure-treated wood deck flooring.",
+                "productTier": 2,
+                "isSelected": false
+              },
+              {
+                "id": "option040",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1500,
+                  "highPriceInDollars": 3000
+                },
+                "description": "Basic wood deck flooring with weather seal.",
+                "productTier": 1,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "group009",
+        "name": "Railing",
+        "lineItems": [
+          {
+            "id": "item015",
+            "name": "Railing",
+            "quantity": 100,
+            "unit": "linear ft",
+            "productOptions": [
+              {
+                "id": "option041",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 2000,
+                  "highPriceInDollars": 3500
+                },
+                "description": "Aluminum deck railing with custom design.",
+                "productTier": 3,
+                "isSelected": true
+              },
+              {
+                "id": "option042",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1500,
+                  "highPriceInDollars": 2500
+                },
+                "description": "Wood deck railing with weatherproof coating.",
+                "productTier": 2,
+                "isSelected": false
+              },
+              {
+                "id": "option043",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 1000,
+                  "highPriceInDollars": 2000
+                },
+                "description": "Basic wood deck railing.",
+                "productTier": 1,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "area6": {
+    "id": "area6",
+    "name": "Basement Renovation",
+    "lineItemGroups": [
+      {
+        "id": "group009",
+        "name": "Flooring",
+        "lineItems": [
+          {
+            "id": "item016",
+            "name": "Flooring",
+            "quantity": 500,
+            "unit": "sq ft",
+            "productOptions": [
+              {
+                "id": "option044",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 5000,
+                  "highPriceInDollars": 7000
+                },
+                "description": "Luxury vinyl plank flooring.",
+                "productTier": 3,
+                "isSelected": true
+              },
+              {
+                "id": "option045",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 3000,
+                  "highPriceInDollars": 5000
+                },
+                "description": "Engineered hardwood flooring.",
+                "productTier": 2,
+                "isSelected": false
+              },
+              {
+                "id": "option046",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 2000,
+                  "highPriceInDollars": 4000
+                },
+                "description": "Laminate flooring with water-resistant finish.",
+                "productTier": 1,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "group010",
+        "name": "Drywall Installation",
+        "lineItems": [
+          {
+            "id": "item017",
+            "name": "Drywall Installation",
+            "quantity": 1000,
+            "unit": "sq ft",
+            "productOptions": [
+              {
+                "id": "option047",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 4000,
+                  "highPriceInDollars": 6000
+                },
+                "description": "Fire-resistant drywall.",
+                "productTier": 3,
+                "isSelected": true
+              },
+              {
+                "id": "option048",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 3000,
+                  "highPriceInDollars": 5000
+                },
+                "description": "Standard drywall with soundproofing.",
+                "productTier": 2,
+                "isSelected": false
+              },
+              {
+                "id": "option049",
+                "priceRangePerUnit": {
+                  "lowPriceInDollars": 2500,
+                  "highPriceInDollars": 4000
+                },
+                "description": "Basic drywall installation.",
+                "productTier": 1,
+                "isSelected": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+.spinner-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .spinner {
+    position: absolute;
+    bottom: -3%;
+    width: 69.5%;
+    height: 69.5%;
+    border: 4px solid rgba(0, 0, 0, 0); /* Light gray background */
+    border-top: .23rem solid #35728A; /* Spinner color */
+    border-right: .23rem solid #35728A; /* Spinner color */
+    border-left: .23rem solid #35728A; /* Spinner color */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1; /* Ensure it's behind the image */
+  }
+  
+  .image {
+    position: relative;
+    z-index: 2; /* Bring image in front of spinner */
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
