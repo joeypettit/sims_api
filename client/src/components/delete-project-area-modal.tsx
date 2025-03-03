@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deleteProjectArea } from "../api/api";
+import { ButtonProps } from "./button";
 import Modal from "./modal";
-import Button, { ButtonProps } from "./button";
-import { useState } from "react";
 
 type DeleteProjectAreaModalProps = {
   isOpen: boolean;

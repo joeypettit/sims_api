@@ -1,15 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import Button from "../../components/button";
 import { useEffect, useRef, useState } from "react";
-import Modal from "../../components/modal";
-import { validateTemplateName } from "../../util/form-validation";
-import { createAreaTemplate, createUnit, deleteUnit, getUnits, deleteTemplate } from "../../api/api";
-import SimsSpinner from "../../components/sims-spinner/sims-spinner";
-import { getAllAreaTemplates } from "../../api/api";
-import UnitsList from "../../components/units-list";
+import { useNavigate } from "react-router-dom";
+import { createAreaTemplate, createUnit, deleteTemplate, deleteUnit, getAllAreaTemplates, getUnits } from "../../api/api";
 import AddUnitModal from "../../components/add-unit-modal";
+import Modal from "../../components/modal";
+import SimsSpinner from "../../components/sims-spinner/sims-spinner";
 import TemplatesList from "../../components/templates-list";
+import UnitsList from "../../components/units-list";
+import { validateTemplateName } from "../../util/form-validation";
 
 export default function SettingsPanel() {
   const navigate = useNavigate();
@@ -47,12 +45,12 @@ export default function SettingsPanel() {
 
   const createAreaTemplateMutation = useMutation({
     mutationFn: createAreaTemplate,
-    onError: (error, variables, context) => {
+    onError: () => {
       setTemplateModalErrorMessage(
         "There has been an error creating a new template. Please try again."
       );
     },
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data) => {
       setTemplateNameInput("");
       setIsCreateTemplateModalOpen(false);
       navigate(`/settings/edit-template/${data.id}`);

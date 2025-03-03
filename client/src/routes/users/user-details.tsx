@@ -1,26 +1,23 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams, useNavigate } from "react-router-dom";
-import { getUser, updateUser, deleteUser, toggleUserBlocked, resetUserPassword } from "../../api/api";
-import { useState, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { FaKey, FaTrash, FaUserCheck, FaUserTimes } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
+import { useNavigate, useParams } from "react-router-dom";
+import { deleteUser, getUser, resetUserPassword, toggleUserBlocked, updateUser } from "../../api/api";
+import { UserRole } from "../../app/types/user";
 import Button from "../../components/button";
 import IconButton from "../../components/icon-button";
-import PanelHeaderBar from "../../components/page-header-bar";
 import Modal from "../../components/modal";
-import { UserRole } from "../../app/types/user";
+import PanelHeaderBar from "../../components/page-header-bar";
 import ProjectsList from "../../components/projects-list";
 import StatusPill from "../../components/status-pill";
-import { FaTrash, FaUserCheck, FaUserTimes, FaKey } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
 
 const roleOptions = [
   { value: "USER", label: "User" },
   { value: "ADMIN", label: "Admin" }
 ];
 
-const formatRole = (role: string) => {
-  if (role === 'SUPER_ADMIN') return 'Super Admin';
-  return role.charAt(0) + role.slice(1).toLowerCase();
-};
+
 
 export default function UserDetails() {
   const { userId } = useParams();
@@ -112,9 +109,6 @@ export default function UserDetails() {
     }
   };
 
-  const handleDelete = () => {
-    setShowDeleteModal(true);
-  };
 
   const handleResetPassword = () => {
     if (user?.userAccount?.id) {

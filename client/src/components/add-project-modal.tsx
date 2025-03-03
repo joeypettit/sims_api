@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import Modal from "./modal";
 import { useMutation } from "@tanstack/react-query";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createBlankProject } from "../api/api";
+import Modal from "./modal";
 
 type AddProjectModalProps = {
   isOpen: boolean;
@@ -27,7 +27,7 @@ export default function AddProjectModal({
     },
     onError: (error) => {
       console.error("Error creating project:", error);
-      throw Error(`Error creating project: ${error}`);
+      setModalErrorMessage(`Error creating project: ${error}`);
     },
   });
 

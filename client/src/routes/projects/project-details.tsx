@@ -1,21 +1,19 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getProjectById, removeUserFromProject, removeClientFromProject, getProjectCostRange, updateProjectDates, deleteProject, starProject, unstarProject, isProjectStarred } from "../../api/api";
-import Button from "../../components/button";
-import AddProjectManagerModal from "../../components/add-project-manager-modal";
-import AddProjectClientModal from "../../components/add-project-client-modal";
-import PanelHeaderBar from "../../components/page-header-bar";
-import AddProjectAreaModal from "../../components/add-project-area-modal";
-import DeleteProjectAreaModal from "../../components/delete-project-area-modal";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Project } from "../../app/types/project";
-import ProjectManagersList from "../../components/project-managers-list";
-import ProjectClientsList from "../../components/project-clients-list";
-import { FaPlus, FaPen, FaCheck, FaTimes, FaTrash, FaStar, FaRegStar } from "react-icons/fa";
-import { IoMdCloseCircle } from "react-icons/io";
-import { formatNumberWithCommas } from "../../util/utils";
+import { FaPen, FaPlus, FaRegStar, FaStar, FaTrash } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
+import { deleteProject, getProjectById, getProjectCostRange, isProjectStarred, removeClientFromProject, removeUserFromProject, starProject, unstarProject, updateProjectDates } from "../../api/api";
+import AddProjectAreaModal from "../../components/add-project-area-modal";
+import AddProjectClientModal from "../../components/add-project-client-modal";
+import AddProjectManagerModal from "../../components/add-project-manager-modal";
+import Button from "../../components/button";
+import DeleteProjectAreaModal from "../../components/delete-project-area-modal";
 import IconButton from "../../components/icon-button";
 import Modal from "../../components/modal";
+import PanelHeaderBar from "../../components/page-header-bar";
+import ProjectClientsList from "../../components/project-clients-list";
+import ProjectManagersList from "../../components/project-managers-list";
+import { formatNumberWithCommas } from "../../util/utils";
 
 export default function ProjectDetails() {
   const { id } = useParams();

@@ -1,27 +1,23 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {sortArrayByIndexProperty, updateGroupIndexInCategory } from "../../util/utils";
-import { filterGroupsByCategory } from "../../util/utils";
+import { DragDropContext, Droppable, DropResult, } from "@hello-pangea/dnd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   createGroup,
   getAllGroupCategories,
+  getAreaCostRange,
   getProjectAreaById,
   setIndexOfGroupInCategory,
-  setIsOpenOnAllGroupsInArea,
-  getAreaCostRange,
-  updateOptionSelection
+  setIsOpenOnAllGroupsInArea
 } from "../../api/api";
-import LineItemGroupContainer from "../../components/budget-columns/line-item-group";
 import type { LineItemGroup } from "../../app/types/line-item-group";
-import { getGroupsTotalSalePrice } from "../../util/utils";
-import { formatNumberWithCommas } from "../../util/utils";
-import SimsSpinner from "../../components/sims-spinner/sims-spinner";
-import Modal from "../../components/modal";
-import { useState } from "react";
-import { validateGroupName } from "../../util/form-validation";
-import Button from "../../components/button";
-import StickyTierToolbar from "../../components/tier-toolbar";
 import { ProjectArea } from "../../app/types/project-area";
-import { DragDropContext, Droppable, DropResult, } from "@hello-pangea/dnd";
+import LineItemGroupContainer from "../../components/budget-columns/line-item-group";
+import Button from "../../components/button";
+import Modal from "../../components/modal";
+import SimsSpinner from "../../components/sims-spinner/sims-spinner";
+import StickyTierToolbar from "../../components/tier-toolbar";
+import { validateGroupName } from "../../util/form-validation";
+import { filterGroupsByCategory, formatNumberWithCommas, getGroupsTotalSalePrice, sortArrayByIndexProperty, updateGroupIndexInCategory } from "../../util/utils";
 
 type ProjectAreaProposalProps = {
   areaId?: string;
@@ -132,7 +128,7 @@ export default function ProjectAreaProposal({
 
   const setIsOpenAllGroupsInAreaMutation = useMutation({
     mutationFn: setIsOpenOnAllGroupsInArea,
-    onMutate: async ({ areaId, isOpen }) => {
+    onMutate: async ({ isOpen }) => {
       await queryClient.cancelQueries({ queryKey: ["area"] });
 
       // Optimistic Update: Update the query cache directly
@@ -183,20 +179,6 @@ export default function ProjectAreaProposal({
         queryKey: ["area"],
       });
     },
-  });
-
-  const updateOptionMutation = useMutation({
-    mutationFn: updateOptionSelection,
-    onSuccess: () => {
-      // Invalidate both the area cost and project cost queries
-      queryClient.invalidateQueries({ queryKey: ["area-cost", areaId] });
-      // Also invalidate the project cost since it depends on area costs
-      if (projectAreaQuery.data?.projectId) {
-        queryClient.invalidateQueries({ 
-          queryKey: ["project-cost", projectAreaQuery.data.projectId] 
-        });
-      }
-    }
   });
 
   function getAreasTotalSalePrice() {

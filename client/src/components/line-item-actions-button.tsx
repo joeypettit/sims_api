@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import ThreeDotButton from "./three-dot-button";
-import { MdOutlineEdit } from "react-icons/md";
-import { MdOutlineDeleteForever } from "react-icons/md";
-import { BiAddToQueue } from "react-icons/bi";
-import Modal from "./modal";
-import { LineItem } from "../app/types/line-item";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteLineItem } from "../api/api";
-import SimsSpinner from "./sims-spinner/sims-spinner";
+import { useState } from "react";
+import { MdOutlineDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { deleteLineItem } from "../api/api";
+import { LineItem } from "../app/types/line-item";
+import Modal from "./modal";
+import SimsSpinner from "./sims-spinner/sims-spinner";
+import ThreeDotButton from "./three-dot-button";
 
 type LineItemActionButtonProps = {
   lineItem: LineItem;
@@ -51,7 +49,8 @@ export default function LineItemActionsButton({
 
   const deleteLineItemMutation = useMutation({
     mutationFn: deleteLineItem,
-    onError: (error, variables, context) => {
+    onError: (error, variables, ) => {
+      console.error("Error deleting line item:", error);
       setModalErrorMessage(
         `There has been an error deleting line item with id ${variables.lineItemId}. Please try again.`
       );

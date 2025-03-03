@@ -1,5 +1,4 @@
 import { HiDotsVertical } from "react-icons/hi";
-import { IoClose } from "react-icons/io5";
 
 type ThreeDotButtonProps = {
   onClick: () => void;

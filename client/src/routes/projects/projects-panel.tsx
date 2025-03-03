@@ -1,20 +1,17 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { FaChevronLeft, FaChevronRight, FaPlus, FaStar } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
+import { searchProjects } from "../../api/api";
+import { Project } from "../../app/types/project";
+import AddProjectModal from "../../components/add-project-modal";
+import Button from "../../components/button";
 import type { PanelTableColumn } from "../../components/panel-table";
 import PanelTable from "../../components/panel-table";
-import { useNavigate } from "react-router-dom";
-import { Project } from "../../app/types/project";
-import { createBlankProject, getCurrentUser, searchProjects } from "../../api/api";
-import Button from "../../components/button";
-import { FaPlus, FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa6";
-import { useEffect, useRef, useState } from "react";
-import Modal from "../../components/modal";
-import AddProjectModal from "../../components/add-project-modal";
 import { useDebounce } from "../../hooks/useDebounce";
-import { useUserRole } from "../../hooks/useUserRole";
 
 export default function ProjectsPanel() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState("1");
   const [addProjectModalIsOpen, setAddProjectModalIsOpen] = useState(false);

@@ -1,16 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { FaChevronLeft, FaChevronRight, FaPlus } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
+import { getCurrentUser, searchUsers } from "../../api/api";
+import { User } from "../../app/types/user";
+import AddUserModal from "../../components/add-user-modal";
+import Button from "../../components/button";
 import type { PanelTableColumn } from "../../components/panel-table";
 import PanelTable from "../../components/panel-table";
-import { searchUsers, getCurrentUser } from "../../api/api";
-import { useNavigate } from "react-router-dom";
-import { User } from "../../app/types/user";
-import { useState } from "react";
-import Button from "../../components/button";
-import { FaChevronLeft, FaChevronRight, FaPlus } from "react-icons/fa6";
-import AddUserModal from "../../components/add-user-modal";
 import StatusPill from "../../components/status-pill";
 import { useDebounce } from "../../hooks/useDebounce";
-import { useUserRole } from "../../hooks/useUserRole";
 
 const formatRole = (role: string) => {
   if (role === 'SUPER_ADMIN') return 'Super Admin';

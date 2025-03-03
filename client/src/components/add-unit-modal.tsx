@@ -1,7 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { validateUnitName } from "../util/form-validation";
-import { createUnit } from "../api/api";
 import Modal from "./modal";
 
 type AddUnitModalProps = {
@@ -17,7 +15,6 @@ export default function AddUnitModal({
   onCancel,
   errorMessage
 }: AddUnitModalProps) {
-  const queryClient = useQueryClient();
   const [unitNameInput, setUnitNameInput] = useState("");
   const [validationError, setValidationError] = useState<string>("");
   const unitInputRef = useRef<HTMLInputElement>(null);
@@ -46,20 +43,6 @@ export default function AddUnitModal({
     onCancel();
   };
 
-  const createUnitMutation = useMutation({
-    mutationFn: createUnit,
-    onError: () => {
-      setValidationError(
-        "There has been an error creating a new unit. Please try again."
-      );
-    },
-    onSuccess: (data) => {
-      console.log("Unit Created with id", data.id);
-      queryClient.invalidateQueries({ queryKey: ["units"] });
-      setUnitNameInput("");
-      onCancel();
-    },
-  });
 
   return (
     <Modal

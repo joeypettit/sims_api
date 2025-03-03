@@ -123,7 +123,7 @@ export default function LineItemDisplay({
       });
       return { previousProjectArea };
     },
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       console.log("There was an ERROR:", error);
       if (context?.previousProjectArea) {
         queryClient.setQueryData(["area"], context.previousProjectArea);

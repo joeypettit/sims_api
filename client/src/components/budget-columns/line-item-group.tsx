@@ -1,15 +1,14 @@
+import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createBlankLineItem, setGroupIsOpen, setLineItemIndex } from "../../api/api";
 import { LineItemGroup } from "../../app/types/line-item-group";
-import LineItemDisplay from "./line-item";
-import CollapsibleDiv from "../collapsible-div";
+import { ProjectArea } from "../../app/types/project-area";
 import { formatNumberWithCommas } from "../../util/utils";
 import Button from "../button";
-import { useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createBlankLineItem, setGroupIsOpen, setLineItemIndex } from "../../api/api";
-import { useEffect, useState } from "react";
-import { Draggable, Droppable, DragDropContext, DropResult } from "@hello-pangea/dnd";
-import { LineItem } from "../../app/types/line-item";
-import { ProjectArea } from "../../app/types/project-area";
+import CollapsibleDiv from "../collapsible-div";
+import LineItemDisplay from "./line-item";
 
 export type LineItemGroupDisplayProps = {
   group: LineItemGroup;
@@ -70,7 +69,7 @@ export default function LineItemGroupDisplay({
     onMutate: ({ isOpen }) => {
       setIsOpen(isOpen)
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["area"] })
     },
     onError: (error) => {
@@ -108,7 +107,7 @@ export default function LineItemGroupDisplay({
       }
       return { previousArea };
     },
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       console.error("Error reordering line items:", error);
       if (context?.previousArea) {
         queryClient.setQueryData(["area"], context.previousArea);

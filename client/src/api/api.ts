@@ -1,16 +1,15 @@
-import { ProjectArea } from "../app/types/project-area";
-import { Project } from "../app/types/project";
 import axios from "axios";
-import type { LineItemOption } from "../app/types/line-item-option";
-import type { LineItem } from "../app/types/line-item";
-import type { GroupCategory } from "../app/types/group-category";
-import type { LineItemUnit } from "../app/types/line-item-unit";
 import type { AreaTemplate } from "../app/types/area-template";
-import { LineItemGroup } from "../app/types/line-item-group";
-import { User, LoginCredentials, UserRole } from "../app/types/user";
 import { Client } from "../app/types/client";
+import type { GroupCategory } from "../app/types/group-category";
+import type { LineItem } from "../app/types/line-item";
+import { LineItemGroup } from "../app/types/line-item-group";
+import type { LineItemOption } from "../app/types/line-item-option";
+import type { LineItemUnit } from "../app/types/line-item-unit";
 import { PriceRange } from "../app/types/price-range";
-import { QueryClient } from "@tanstack/react-query";
+import { Project } from "../app/types/project";
+import { ProjectArea } from "../app/types/project-area";
+import { LoginCredentials, User, UserRole } from "../app/types/user";
 
 type SearchProjectsResponse = {
   projects: Project[];

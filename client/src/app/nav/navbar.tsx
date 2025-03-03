@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
-import ProfileCircle from "./profile-circle";
-import { Link, Outlet } from "react-router-dom";
+import { useState } from "react";
 import { BsChevronDoubleLeft, BsChevronDoubleRight, BsHousesFill, BsStarFill } from "react-icons/bs";
+import { FaUserCircle, FaUsers, FaUserTie } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
-import { FaUsers, FaUserTie, FaUserCircle } from "react-icons/fa";
+import { Link, Outlet } from "react-router-dom";
 import { useUserRole } from "../../hooks/useUserRole";
 
 const iconSize = "1.8rem";
@@ -48,22 +47,22 @@ const links = [
 ];
 
 function NavBar() {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  // const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   // Function to handle window resize
-  const handleResize = () => {
-    setWindowWidth(window.innerWidth);
-  };
+  // const handleResize = () => {
+  //   setWindowWidth(window.innerWidth);
+  // };
 
   // Set up event listener for window resize
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
+  // useEffect(() => {
+  //   window.addEventListener("resize", handleResize);
 
-    // Cleanup event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  //   // Cleanup event listener on component unmount
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, []);
 
   return <LargeScreenNavBar />;
 
@@ -174,30 +173,30 @@ function LargeScreenNavBar() {
   );
 }
 
-function SmallScreenNavBar() {
-  return (
-    <div className="flex flex-col">
-      <div className="h-full bg-slate-200">
-        <Outlet />
-        <div className="h-16"></div>
-      </div>
-      <div className="pb-2 pt-1 px-2 border-t-2 shadow-sm fixed bottom-0 bg-slate-50">
-        <nav className="w-screen p-1">
-          <ul className="flex flex-row justify-around items-end">
-            {links.map((link, index) => {
-              return (
-                <li key={index}>
-                  <Link to={link.to}>
-                    <div className="group-hover:text-gray-700">{link.icon}</div>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      </div>
-    </div>
-  );
-}
+// function SmallScreenNavBar() {
+//   return (
+//     <div className="flex flex-col">
+//       <div className="h-full bg-slate-200">
+//         <Outlet />
+//         <div className="h-16"></div>
+//       </div>
+//       <div className="pb-2 pt-1 px-2 border-t-2 shadow-sm fixed bottom-0 bg-slate-50">
+//         <nav className="w-screen p-1">
+//           <ul className="flex flex-row justify-around items-end">
+//             {links.map((link, index) => {
+//               return (
+//                 <li key={index}>
+//                   <Link to={link.to}>
+//                     <div className="group-hover:text-gray-700">{link.icon}</div>
+//                   </Link>
+//                 </li>
+//               );
+//             })}
+//           </ul>
+//         </nav>
+//       </div>
+//     </div>
+//   );
+// }
 
 export default NavBar;

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import Modal from './modal';
-import { searchUsers, addUserToProject } from '../api/api';
+import { useState } from 'react';
+import { addUserToProject, searchUsers } from '../api/api';
 import { User } from '../app/types/user';
 import { useDebounce } from '../hooks/useDebounce';
 import Button from './button';
+import Modal from './modal';
 
 type AddProjectManagerModalProps = {
   isOpen: boolean;
