@@ -16,7 +16,7 @@ import '../auth/passport';
 import path from 'path';
 
 const app = express();
-const port = 3000;
+const port = process.env.NODE_ENV === 'production' ? process.env.PORT : 3000;
 
 
 app.use(session({
@@ -39,6 +39,24 @@ app.use((req, res, next)=>{
   next();
 })
 
+const express = require("express");
+const path = require("path");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(express.json()); // If using JSON payloads
+
+// Serve static files from React build folder
+app.use(express.static(path.join(__dirname, "client/build")));
+
+// Serve React frontend for all non-API routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
@@ -51,13 +69,6 @@ app.use("/api/options", optionsRoutes);
 app.use("/api/project-areas", areasRoutes);
 app.use("/api/clients", clientsRoutes);
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/dist')));
-  
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-  });
-}
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
