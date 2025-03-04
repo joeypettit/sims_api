@@ -5,13 +5,15 @@
   "engines": {
     "node": "23.7.0"
   },
-  "scripts": {
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts",  
-    "build": "tsc",  
-    "serve": "node dist/app.js",  
-    "start": "npm run build && node dist/app.js",  
-    "heroku-postbuild": "npm run build && NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
-  },
+"scripts": {
+  "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts",
+  "build": "tsc && npm run build:client",
+  "build:client": "cd client && npm install && npm run build && cd ..",
+  "postbuild": "mkdir -p dist/client && cp -r client/dist dist/client/",
+  "serve": "node dist/app.js",
+  "start": "npm run build && node dist/app.js",
+  "heroku-postbuild": "npm run build"
+},
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   },

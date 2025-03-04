@@ -1,12 +1,11 @@
+import type { OptionTier } from "@prisma/client";
 import express from "express";
-const router = express.Router();
 import prisma from "../../prisma/prisma-client";
-import type { LineItemOption, OptionTier } from "@prisma/client";
-import { removeKeysWhereUndefined } from "../util";
-import { OptionsService } from "../services/options-services";
-import { simulateNetworkLatency } from "../util";
-import { LineItemsService } from "../services/line-items-service";
 import { isAuthenticated } from "../middleware/auth";
+import { LineItemsService } from "../services/line-items-service";
+import { OptionsService } from "../services/options-services";
+import { removeKeysWhereUndefined } from "../util";
+const router = express.Router();
 
 const optionsService = new OptionsService();
 

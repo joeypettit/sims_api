@@ -18,6 +18,13 @@ import path from 'path';
 const app = express();
 const port = process.env.NODE_ENV === 'production' ? process.env.PORT : 3000;
 
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const databaseUrl = isDevelopment 
+  ? process.env.DATABASE_URL_DEV 
+  : process.env.DATABASE_URL;
+
+// Make sure this environment variable is available to Prisma
+process.env.DATABASE_URL = databaseUrl;
 
 app.use(session({
   secret: process.env.SESSION_SECRET!,
@@ -42,13 +49,6 @@ app.use((req, res, next)=>{
 // Middleware
 app.use(express.json()); // If using JSON payloads
 
-// Serve static files from React build folder
-app.use(express.static(path.join(__dirname, "client/build")));
-
-// Serve React frontend for all non-API routes
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/build", "index.html"));
-});
 
 
 app.use(express.json());
@@ -62,6 +62,15 @@ app.use("/api/units", unitsRoutes);
 app.use("/api/options", optionsRoutes);
 app.use("/api/project-areas", areasRoutes);
 app.use("/api/clients", clientsRoutes);
+
+// Serve static files from React build folder
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+// Serve React frontend for all non-API routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
+
 
 
 app.listen(port, () => {
