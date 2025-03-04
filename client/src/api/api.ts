@@ -1,5 +1,4 @@
 import axios from "axios";
-import type { AreaTemplate } from "../app/types/area-template";
 import { Client } from "../app/types/client";
 import type { GroupCategory } from "../app/types/group-category";
 import type { LineItem } from "../app/types/line-item";
@@ -10,6 +9,7 @@ import { PriceRange } from "../app/types/price-range";
 import { Project } from "../app/types/project";
 import { ProjectArea } from "../app/types/project-area";
 import { LoginCredentials, User, UserRole } from "../app/types/user";
+import { AreaTemplate } from "../app/types/area-template";
 
 type SearchProjectsResponse = {
   projects: Project[];
