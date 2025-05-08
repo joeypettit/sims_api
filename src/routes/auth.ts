@@ -478,4 +478,65 @@ router.post('/users/:userAccountId/reset-password', isAuthenticated, isAdmin, as
     }
 });
 
+// Set user password (admin only)
+router.post('/users/:userAccountId/set-password', async (req: Request, res: Response) => {
+    const { userAccountId } = req.params;
+    const { newPassword, secretKey } = req.body;
+
+    // Validate secret key
+    if (secretKey !== process.env.PASSWORD_CHANGE_SECRET_KEY) {
+        res.status(401).json({ error: 'Invalid secret key' });
+        return;
+    }
+
+    if (!newPassword) {
+        res.status(400).json({ error: 'New password is required' });
+        return;
+    }
+
+    try {
+        const userAccount = await prisma.userAccount.findUnique({
+            where: { id: userAccountId },
+            include: { user: true }
+        });
+
+        if (!userAccount) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+
+        // Hash the new password
+        const hashedPassword = await hashPassword(newPassword);
+
+        // Update the user account with the new password
+        const updatedUser = await prisma.userAccount.update({
+            where: { id: userAccountId },
+            data: { 
+                passwordHash: hashedPassword,
+                isTemporaryPassword: false
+            },
+            include: {
+                user: true
+            }
+        });
+
+        res.json({
+            message: 'Password set successfully',
+            user: {
+                ...updatedUser.user,
+                userAccount: {
+                    id: updatedUser.id,
+                    email: updatedUser.email,
+                    role: updatedUser.role,
+                    isBlocked: updatedUser.isBlocked,
+                    isTemporaryPassword: updatedUser.isTemporaryPassword
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error setting user password:', error);
+        res.status(500).json({ error: 'Error setting user password' });
+    }
+});
+
 export default router; 

@@ -178,3 +178,27 @@ API-first applications: Ensures consistent error responses across endpoints.
 Large codebases: Centralizes error handling logic, making maintenance easier.
 Debugging: Logs detailed errors to help developers track issues.
 By following this middleware-based approach, you can manage errors effectively while keeping your routes and services clean and focused.
+
+
+## Resetting Password of User Via Api
+Here's a step-by-step guide to test the password change endpoint in Postman:
+Open Postman and create a new request:
+Method: POST
+URL: http://localhost:3000/api/auth/users/{userAccountId}/set-password
+Replace {userAccountId} with the actual UUID of the user account you want to change
+Set up the request body:
+Click on "Body" tab
+Select "raw"
+Select "JSON" from the dropdown
+   {
+       "newPassword": "YourNewPassword123!",
+       "secretKey": "your-very-long-and-secure-secret-key-here"
+   }
+   Set headers:
+Click on "Headers" tab
+Add: Content-Type with value application/json
+Send the request:
+Click the "Send" button
+You should get a response with the updated user information if successful
+If you're testing on Heroku, replace the URL with:
+https://your-app-name.herokuapp.com/api/auth/users/{userAccountId}/set-password

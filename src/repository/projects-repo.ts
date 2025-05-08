@@ -23,6 +23,16 @@ export default class ProjectsRepo {
               ]
             }
           }
+        },
+        {
+          users: {
+            some: {
+              OR: [
+                { firstName: { contains: query, mode: Prisma.QueryMode.insensitive } },
+                { lastName: { contains: query, mode: Prisma.QueryMode.insensitive } }
+              ]
+            }
+          }
         }
       ]
     };
