@@ -89,8 +89,8 @@ export class AuthService {
     role: string;
   }) {
     // For initial registration, we'll generate a simple temporary password
-    const temporaryPassword = generateSimplePassword(8);
-    const hashedPassword = await hashPassword(temporaryPassword);
+
+    const hashedPassword = await hashPassword(userData.password);
     
     const userAccount = await prisma.userAccount.create({
       data: {
@@ -110,7 +110,7 @@ export class AuthService {
       }
     });
 
-    return { ...userAccount, temporaryPassword };
+    return { ...userAccount };
   }
 
   async resetUserPassword(userAccountId: string): Promise<string> {

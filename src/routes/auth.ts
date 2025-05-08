@@ -123,10 +123,17 @@ router.delete('/users/:userId', isAuthenticated, isAdmin, async (req: Request, r
                 });
             }
 
-            // Delete the user account (this will cascade delete the user due to the relation)
-            await prisma.userAccount.delete({
-                where: { id: user.userAccountId }
+            // Delete the user first, then the account
+            await prisma.user.delete({
+                where: { id: userId }
             });
+
+            // Now we can safely delete the user account
+            if (user.userAccount) {
+                await prisma.userAccount.delete({
+                    where: { id: user.userAccount.id }
+                });
+            }
         });
 
         res.json({ message: 'User deleted successfully' });

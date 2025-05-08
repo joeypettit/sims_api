@@ -40,18 +40,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next)=>{
-  console.log(req.session);
-  console.log(req.user);
-  next();
-})
 
 // Middleware
 app.use(express.json()); // If using JSON payloads
-
-
-
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectsRoutes);
