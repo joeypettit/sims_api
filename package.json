@@ -7,10 +7,9 @@
   },
 "scripts": {
   "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts",
-  "prebuild": "npm install",
   "build": "tsc && npm run build:client",
-  "build:client": "cd client && npm install --include=dev && npm run build && cd ..",
-  "postbuild": "mkdir -p dist/client && cp -r client/build dist/client/",
+  "build:client": "cd client && npm install && npm run build && cd ..",
+  "postbuild": "mkdir -p dist/client && cp -r client/dist dist/client/",
   "serve": "node dist/app.js",
   "start": "npm run build && node dist/app.js",
   "heroku-postbuild": "npm run build"
