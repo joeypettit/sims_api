@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Create Aaron Harrison as super admin
-  const aaronPassword = await hashPassword('password123');
+  const aaronPassword = await hashPassword('simsincorporated');
   const aaron = await prisma.userAccount.create({
     data: {
       email: 'aaron@simsincorporated.com',
@@ -21,12 +21,13 @@ async function main() {
   });
 
   // Create Joey Pettit as super admin
-  const joeyPassword = await hashPassword('password123');
+  const joeyPassword = await hashPassword('simsincorporated');
   const joey = await prisma.userAccount.create({
     data: {
       email: 'joeywpettit@gmail.com',
       passwordHash: joeyPassword,
       role: UserRole.SUPER_ADMIN,
+      isTemporaryPassword: true,
       user: {
         create: {
           firstName: 'Joey',
@@ -39,43 +40,27 @@ async function main() {
   console.log('Created super admin users:', { aaron, joey });
 
   // Create User Accounts with hashed passwords
-  const aliceAccount = await prisma.userAccount.create({
+  const dondiAccount = await prisma.userAccount.create({
     data: {
-      email: "alice@example.com",
-      passwordHash: await hashPassword("password123"),
+      email: "dondi@simsincorporated.com",
+      passwordHash: await hashPassword("simsincorporated"),
       role: UserRole.ADMIN,
+      isTemporaryPassword: true,
       user: {
         create: {
-          firstName: "Alice",
-          lastName: "Johnson"
+          firstName: "Dondi",
+          lastName: "Szombatfalvy"
         }
       }
     }
   });
 
-  const aliceUser = await prisma.user.findUnique({
-    where: { userAccountId: aliceAccount.id }
+  const dondiUser = await prisma.user.findUnique({
+    where: { userAccountId: dondiAccount.id }
   });
 
-  const bobAccount = await prisma.userAccount.create({
-    data: {
-      email: "bob@example.com",
-      passwordHash: await hashPassword("password123"),
-      role: UserRole.USER,
-      user: {
-        create: {
-          firstName: "Bob",
-          lastName: "Williams"
-        }
-      }
-    }
-  });
 
-  const bobUser = await prisma.user.findUnique({
-    where: { userAccountId: bobAccount.id }
-  });
-
-  if (!aliceUser || !bobUser) {
+  if (!dondiUser) {
     throw new Error("Failed to create user accounts properly");
   }
 
@@ -181,7 +166,7 @@ async function main() {
         connect: [{ id: client1.id }],
       },
       users: {
-        connect: [{ id: aliceUser.id }, { id: bobUser.id }],
+        connect: [{ id: dondiUser?.id }],
       },
       areas: {
         create: [
