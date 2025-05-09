@@ -7,6 +7,7 @@ import { searchMyProjects } from "../../api/api";
 import { FaStar, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
+import SimsSpinner from "../../components/sims-spinner/sims-spinner";
 
 export default function MyProjectsPanel() {
   const navigate = useNavigate();
@@ -94,7 +95,9 @@ export default function MyProjectsPanel() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-4">Loading projects...</div>
+        <div className="flex justify-center py-4">
+          <SimsSpinner centered />
+        </div>
       ) : !data ? (
         <div className="text-center py-4 text-gray-500">Error loading projects</div>
       ) : data.projects.length === 0 ? (

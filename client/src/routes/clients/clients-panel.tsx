@@ -9,6 +9,7 @@ import Button from "../../components/button";
 import { FaChevronLeft, FaChevronRight, FaPlus } from "react-icons/fa6";
 import AddClientModal from "../../components/add-client-modal";
 import { useDebounce } from "../../hooks/useDebounce";
+import SimsSpinner from "../../components/sims-spinner/sims-spinner";
 
 export default function ClientsPanel() {
   const navigate = useNavigate();
@@ -80,7 +81,9 @@ export default function ClientsPanel() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-4">Loading clients...</div>
+        <div className="flex justify-center py-4">
+          <SimsSpinner centered />
+        </div>
       ) : !data ? (
         <div className="text-center py-4 text-gray-500">Error loading clients</div>
       ) : data.clients.length === 0 ? (

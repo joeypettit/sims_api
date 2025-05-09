@@ -11,6 +11,7 @@ import { ProjectArea } from "../app/types/project-area";
 import { LoginCredentials, User, UserRole } from "../app/types/user";
 import { AreaTemplate } from "../app/types/area-template";
 
+
 type SearchProjectsResponse = {
   projects: Project[];
   pagination: {

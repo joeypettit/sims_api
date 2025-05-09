@@ -9,6 +9,7 @@ import Button from "../../components/button";
 import type { PanelTableColumn } from "../../components/panel-table";
 import PanelTable from "../../components/panel-table";
 import { useDebounce } from "../../hooks/useDebounce";
+import SimsSpinner from "../../components/sims-spinner/sims-spinner";
 
 export default function ProjectsPanel() {
   const navigate = useNavigate();
@@ -103,7 +104,9 @@ export default function ProjectsPanel() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-4">Loading projects...</div>
+        <div className="flex justify-center py-4">
+          <SimsSpinner centered />
+        </div>
       ) : !data ? (
         <div className="text-center py-4 text-gray-500">Error loading projects</div>
       ) : data.projects.length === 0 ? (

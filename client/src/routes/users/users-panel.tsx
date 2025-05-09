@@ -10,6 +10,7 @@ import type { PanelTableColumn } from "../../components/panel-table";
 import PanelTable from "../../components/panel-table";
 import StatusPill from "../../components/status-pill";
 import { useDebounce } from "../../hooks/useDebounce";
+import SimsSpinner from "../../components/sims-spinner/sims-spinner";
 
 const formatRole = (role: string) => {
   if (role === 'SUPER_ADMIN') return 'Super Admin';
@@ -100,7 +101,9 @@ export default function UsersPanel() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-4">Loading users...</div>
+        <div className="flex justify-center py-4">
+          <SimsSpinner centered />
+        </div>
       ) : !data ? (
         <div className="text-center py-4 text-gray-500">Error loading users</div>
       ) : data.users.length === 0 ? (
