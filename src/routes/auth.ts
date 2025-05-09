@@ -446,8 +446,15 @@ router.post('/change-password', isAuthenticated, async (req, res) => {
 });
 
 // Reset user password (admin only)
-router.post('/users/:userAccountId/reset-password', isAuthenticated, isAdmin, async (req, res) => {
+router.post('/users/:userAccountId/reset-password', async (req: Request, res: Response) => {
     const { userAccountId } = req.params;
+    const { secretKey } = req.body;
+
+    // Validate secret key
+    if (secretKey !== process.env.PASSWORD_CHANGE_SECRET_KEY) {
+        res.status(401).json({ error: 'Invalid secret key' });
+        return;
+    }
 
     try {
         const userAccount = await prisma.userAccount.findUnique({
@@ -460,17 +467,22 @@ router.post('/users/:userAccountId/reset-password', isAuthenticated, isAdmin, as
             return;
         }
 
-        // Prevent resetting password of super admin users
-        if (userAccount.role === UserRole.SUPER_ADMIN) {
-            res.status(403).json({ error: 'Super admin passwords cannot be reset' });
-            return;
-        }
-
+        // Generate and set new temporary password
         const temporaryPassword = await authService.resetUserPassword(userAccountId);
 
         res.json({ 
             message: 'Password reset successfully',
-            temporaryPassword
+            temporaryPassword,
+            user: {
+                ...userAccount.user,
+                userAccount: {
+                    id: userAccount.id,
+                    email: userAccount.email,
+                    role: userAccount.role,
+                    isBlocked: userAccount.isBlocked,
+                    isTemporaryPassword: true
+                }
+            }
         });
     } catch (error) {
         console.error('Error resetting password:', error);
