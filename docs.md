@@ -181,24 +181,35 @@ By following this middleware-based approach, you can manage errors effectively w
 
 
 ## Resetting Password of User Via Api
-Here's a step-by-step guide to test the password change endpoint in Postman:
-Open Postman and create a new request:
-Method: POST
-URL: http://localhost:3000/api/auth/users/{userAccountId}/set-password
-Replace {userAccountId} with the actual UUID of the user account you want to change
-Set up the request body:
-Click on "Body" tab
-Select "raw"
-Select "JSON" from the dropdown
-   {
-       "newPassword": "YourNewPassword123!",
-       "secretKey": "your-very-long-and-secure-secret-key-here"
-   }
-   Set headers:
-Click on "Headers" tab
-Add: Content-Type with value application/json
-Send the request:
-Click the "Send" button
-You should get a response with the updated user information if successful
-If you're testing on Heroku, replace the URL with:
-https://your-app-name.herokuapp.com/api/auth/users/{userAccountId}/set-password
+To use in Postman:
+Create a new POST request
+URL: http://localhost:3000/api/auth/users/{userAccountId}/reset-password
+Replace {userAccountId} with the actual UUID of the user account
+Headers:
+Content-Type: application/json
+
+{
+    "secretKey": "your-very-long-and-secure-secret-key-here"
+}
+
+
+The response will look like:
+{
+    "message": "Password reset successfully",
+    "temporaryPassword": "generated-password-here",
+    "user": {
+        "id": "user-id",
+        "firstName": "First",
+        "lastName": "Last",
+        "userAccount": {
+            "id": "account-id",
+            "email": "user@example.com",
+            "role": "USER",
+            "isBlocked": false,
+            "isTemporaryPassword": true
+        }
+    }
+}
+
+For Heroku deployment:
+Set the secret key:
