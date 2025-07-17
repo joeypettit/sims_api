@@ -51,7 +51,7 @@ export default function CollapsibleDiv({
       </div>
       {/* {isOpen && <hr className=" border-gray-200" />} */}
       <div
-        className={`transition-all duration-300 ease-in-out  ${isOpen ? "max-h-screen" : "max-h-0 overflow-hidden"
+        className={`transition-all duration-300 ease-in-out  ${isOpen ? "" : "max-h-0 overflow-hidden"
           }`}
       >
         {isOpen && <div className="">{children}</div>}

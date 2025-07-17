@@ -310,7 +310,7 @@ export default function ProjectAreaProposal({
         console.log("projectAreaQuery.data?.lineItemGroups",projectAreaQuery.data?.lineItemGroups)
         const groupsInCategory = filterGroupsByCategory({ groups: projectAreaQuery.data?.lineItemGroups, categoryId: category.id })
         return (
-          <div key={category.id} className="py-4 px-2">
+          <div key={category.id} className="py-4 px-2" style={{minWidth: "1150px"}}>
             <div className="flex justify-center">
               <div className=""/> 
                 <h2 className="text-lg font-bold text-center px-10 border-b-2 border-gray-100 ">

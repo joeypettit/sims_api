@@ -162,7 +162,7 @@ export default function LineItemDisplay({
       {(provided) => (
         <>
         <div className="grid grid-cols-5 gap-2 py-4 px-1" ref={provided.innerRef} {...provided.draggableProps}>
-          <div className="flex flex-row border-e border-gray-100">
+          <div className="flex flex-row border-e border-gray-100" style={{minWidth: "225px"}}>
             <div className="flex justify-center items-center px-1"{...provided.dragHandleProps}><RiDraggable /></div>
             <div className="flex flex-col text-center justify-between px-2 pb-2">
               <div className="flex flex-row justify-between w-full">
