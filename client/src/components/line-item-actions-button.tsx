@@ -29,14 +29,14 @@ export default function LineItemActionsButton({
   const actions = [
     {
       icon: <MdOutlineEdit />,
-      title: "Edit",
+      title: "Edit Line",
       action: () => {
         navigate(`/edit-line-item/${lineItem.id}`);
       },
     },
     {
       icon: <MdOutlineDeleteForever />,
-      title: "Delete",
+      title: "Delete Line",
       action: () => {
         setIsDeleteModalOpen(true);
       },

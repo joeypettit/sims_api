@@ -872,3 +872,29 @@ export async function searchMyProjects({
     throw new Error(`Error searching my projects: ${error}`);
   }
 }
+
+export async function updateGroupName({
+  groupId,
+  name,
+}: {
+  groupId: string;
+  name: string;
+}) {
+  try {
+    const response = await axios.put(`/api/groups/${groupId}/update-name`, {
+      name,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error updating group name: ${error}`);
+  }
+}
+
+export async function deleteGroup(groupId: string) {
+  try {
+    const response = await axios.delete(`/api/groups/${groupId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error deleting group: ${error}`);
+  }
+}

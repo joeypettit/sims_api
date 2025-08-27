@@ -1,27 +1,55 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { MdOutlineDeleteForever, MdOutlineEdit } from "react-icons/md";
+import { updateGroupName, deleteGroup } from "../../api/api";
 import Modal from "../modal";
 import ThreeDotButton from "../three-dot-button";
 
 type GroupActionsButtonProps = {
   groupId: string;
   groupName: string;
+  projectAreaId: string;
 };
 
 export default function GroupActionsButton({
   groupId,
-  groupName
+  groupName,
+  projectAreaId
 }: GroupActionsButtonProps) {
+  const queryClient = useQueryClient();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editGroupName, setEditGroupName] = useState(groupName);
   const [modalErrorMessage, setModalErrorMessage] = useState<string>("");
 
+  const updateGroupNameMutation = useMutation({
+    mutationFn: updateGroupName,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["area"] });
+      setIsEditModalOpen(false);
+    },
+    onError: (error) => {
+      setModalErrorMessage(error instanceof Error ? error.message : "Failed to update group name");
+    },
+  });
+
+  const deleteGroupMutation = useMutation({
+    mutationFn: deleteGroup,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["area"] });
+      queryClient.invalidateQueries({ queryKey: ["area-cost", projectAreaId] });
+      setIsDeleteModalOpen(false);
+    },
+    onError: (error) => {
+      setModalErrorMessage(error instanceof Error ? error.message : "Failed to delete group");
+    },
+  });
+
   const actions = [
     {
       icon: <MdOutlineEdit />,
-      title: "Edit",
+      title: "Edit Group",
       action: () => {
         setEditGroupName(groupName);
         setIsEditModalOpen(true);
@@ -29,7 +57,7 @@ export default function GroupActionsButton({
     },
     {
       icon: <MdOutlineDeleteForever />,
-      title: "Delete",
+      title: "Delete Group",
       action: () => {
         setIsDeleteModalOpen(true);
       },
@@ -42,16 +70,15 @@ export default function GroupActionsButton({
 
   function handleEdit() {
     if (editGroupName.trim()) {
-      // TODO: Implement edit group mutation
-      console.log("Edit group:", groupId, "to name:", editGroupName.trim());
-      setIsEditModalOpen(false);
+      updateGroupNameMutation.mutate({
+        groupId,
+        name: editGroupName.trim(),
+      });
     }
   }
 
   function handleDelete() {
-    // TODO: Implement delete group mutation
-    console.log("Delete group:", groupId);
-    setIsDeleteModalOpen(false);
+    deleteGroupMutation.mutate(groupId);
   }
 
   function renderEditModal() {
@@ -61,7 +88,7 @@ export default function GroupActionsButton({
         onConfirm={handleEdit}
         onCancel={() => setIsEditModalOpen(false)}
         title="Edit Group Name"
-        disableConfirm={!editGroupName.trim()}
+        disableConfirm={!editGroupName.trim() || updateGroupNameMutation.isPending}
       >
         <div className="space-y-4">
           <div>
@@ -93,6 +120,7 @@ export default function GroupActionsButton({
         onConfirm={handleDelete}
         onCancel={() => setIsDeleteModalOpen(false)}
         title="Are you sure you would like to delete this group?"
+        disableConfirm={deleteGroupMutation.isPending}
       >
         <div className="space-y-4 text-left">
           <p className="text-red-600 font-medium">Warning: This action cannot be undone!</p>

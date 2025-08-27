@@ -154,6 +154,7 @@ export default function LineItemGroupDisplay({
               <GroupActionsButton
                 groupId={group.id}
                 groupName={group.name}
+                projectAreaId={projectAreaId}
               />
             }
           >
