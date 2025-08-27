@@ -9,6 +9,9 @@ import { formatNumberWithCommas } from "../../util/utils";
 import Button from "../button";
 import CollapsibleDiv from "../collapsible-div";
 import LineItemDisplay from "./line-item";
+import IconButton from "../icon-button";
+import { MdEdit } from "react-icons/md";
+import GroupActionsButton from "./group-actions-button";
 
 export type LineItemGroupDisplayProps = {
   group: LineItemGroup;
@@ -141,27 +144,39 @@ export default function LineItemGroupDisplay({
     <Draggable index={index} draggableId={group.id}>
       {(provided) => (
         <div className="py-2" ref={provided.innerRef} {...provided.draggableProps} >
-          <CollapsibleDiv title={group.name} price={getGroupsTotalSalePrice()} isOpen={isOpen} setIsOpen={handleToggleOpenGroup} provided={provided}>
-          <DragDropContext onDragEnd={handleLineItemDragEnd}>
-            <Droppable droppableId={group.id}>
-              {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps}>
-                  {group.lineItems.map((lineItem, index) => {
-                    return (
-                      <LineItemDisplay
-                        key={lineItem.id}
-                        lineItem={lineItem}
-                        index={index}
-                        projectId={projectId}
-                        projectAreaId={projectAreaId}
-                      />
-                    );
-                  })}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <CollapsibleDiv 
+            title={group.name} 
+            price={getGroupsTotalSalePrice()} 
+            isOpen={isOpen} 
+            setIsOpen={handleToggleOpenGroup} 
+            provided={provided}
+            iconButton={
+              <GroupActionsButton
+                groupId={group.id}
+                groupName={group.name}
+              />
+            }
+          >
+            <DragDropContext onDragEnd={handleLineItemDragEnd}>
+              <Droppable droppableId={group.id}>
+                {(provided) => (
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
+                    {group.lineItems.map((lineItem, index) => {
+                      return (
+                        <LineItemDisplay
+                          key={lineItem.id}
+                          lineItem={lineItem}
+                          index={index}
+                          projectId={projectId}
+                          projectAreaId={projectAreaId}
+                        />
+                      );
+                    })}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
             <div className="grid grid-cols-5 gap-4 py-2 pl-4">
               <div>
                 <Button className="border-b-2 border-gray-100" size={"xs"} variant="white" onClick={handleCreateLineItem}>

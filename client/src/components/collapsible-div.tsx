@@ -10,30 +10,36 @@ export default function CollapsibleDiv({
   setIsOpen,
   provided,
   children,
+  iconButton,
 }: {
   title: string;
   price: string;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  provided: DraggableProvided
+  provided: DraggableProvided;
   children: ReactNode;
+  iconButton?: ReactNode;
 }) {
-
   const toggleCollapse = () => {
     setIsOpen(!isOpen);
   };
 
   return (
     <div className="py-2 border border-gray-200 border-t-gray-100  border-l-0 border-t-1 border-b-2 border-r-0 rounded-lg">
-      <div
-        className="flex justify-start items-center cursor-pointer"
-      >
-        <div {...provided.dragHandleProps} className="p-1 hover:bg-sims-green-50 rounded-e"><RiDraggable /></div>
+      <div className="flex justify-start items-center cursor-pointer">
+        <div {...provided.dragHandleProps} className="p-1 hover:bg-sims-green-50 rounded-e">
+          <RiDraggable />
+        </div>
         <div onClick={toggleCollapse} className="w-full flex justify-between">
-          <div className="ps-1">                 
+          <div className="ps-1 flex items-center gap-2">
             <h2 className="text-md font-bold">{title}</h2>
+            {iconButton && (
+              <div onClick={(e) => e.stopPropagation()}>
+                {iconButton}
+              </div>
+            )}
           </div>
-          <div className="flex flex-row pe-2">
+          <div className="flex flex-row pe-2 items-center gap-2">
             {!isOpen && <h2 className="text-sm font-bold">{price}</h2>}
             <button className="focus:outline-none">
               {isOpen ? (
@@ -49,10 +55,10 @@ export default function CollapsibleDiv({
           </div>
         </div>
       </div>
-      {/* {isOpen && <hr className=" border-gray-200" />} */}
       <div
-        className={`transition-all duration-300 ease-in-out  ${isOpen ? "" : "max-h-0 overflow-hidden"
-          }`}
+        className={`transition-all duration-300 ease-in-out  ${
+          isOpen ? "" : "max-h-0 overflow-hidden"
+        }`}
       >
         {isOpen && <div className="">{children}</div>}
       </div>
