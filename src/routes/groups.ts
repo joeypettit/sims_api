@@ -79,4 +79,36 @@ router.put("/:groupId/set-index-in-category", async (req, res) => {
   }
 });
 
+// Update group name
+router.put("/:groupId/update-name", async (req, res) => {
+  const { groupId } = req.params;
+  const { name } = req.body;
+
+  if (!name || name.trim() === "") {
+    res.status(400).json({ error: "Group name is required" });
+    return;
+  }
+
+  try {
+    const updatedGroup = await groupsService.updateGroupName({ groupId, name: name.trim() });
+    res.json(updatedGroup);
+  } catch (error) {
+    console.error("Error updating group name:", error);
+    res.status(500).json({ error: "An error occurred while updating the group name" });
+  }
+});
+
+// Delete group
+router.delete("/:groupId", async (req, res) => {
+  const { groupId } = req.params;
+
+  try {
+    await groupsService.deleteGroup({ groupId });
+    res.json({ message: "Group deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting group:", error);
+    res.status(500).json({ error: "An error occurred while deleting the group" });
+  }
+});
+
 export default router;

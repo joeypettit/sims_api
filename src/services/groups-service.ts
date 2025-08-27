@@ -1,6 +1,7 @@
 import { LineItem, LineItemGroup, Prisma } from "@prisma/client";
 import prisma from "../../prisma/prisma-client";
 import { reindexEntitiesInArray, UpdatedItem } from "../utility/project-sort";
+import LineItemGroupsRepo from "../repository/groups-repo";
 import { lineItemGroupFullSelect } from "../repository/query-objects";
 
 const groupWithLineItem = Prisma.validator<Prisma.LineItemGroupDefaultArgs>()({
@@ -30,6 +31,17 @@ type updateIndexInCategoryParams = {
   groupId: string,
   indexInCategory: number
 }
+
+type UpdateGroupNameParams = {
+  groupId: string;
+  name: string;
+};
+
+type DeleteGroupParams = {
+  groupId: string;
+};
+
+const groupsRepo = new LineItemGroupsRepo();
 
 export class GroupsService {
 
@@ -230,5 +242,24 @@ export class GroupsService {
     //     return area;
     //   }
     //
+  }
+
+  async updateGroupName({ groupId, name }: UpdateGroupNameParams) {
+    try {
+      const group = await groupsRepo.updateName({ groupId, name });
+      return group;
+    } catch (error) {
+      console.error("Error updating group name", error);
+      throw error;
+    }
+  }
+
+  async deleteGroup({ groupId }: DeleteGroupParams) {
+    try {
+      await groupsRepo.delete({ groupId });
+    } catch (error) {
+      console.error("Error deleting group", error);
+      throw error;
+    }
   }
 }
