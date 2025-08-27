@@ -9,8 +9,6 @@ import { formatNumberWithCommas } from "../../util/utils";
 import Button from "../button";
 import CollapsibleDiv from "../collapsible-div";
 import LineItemDisplay from "./line-item";
-import IconButton from "../icon-button";
-import { MdEdit } from "react-icons/md";
 import GroupActionsButton from "./group-actions-button";
 
 export type LineItemGroupDisplayProps = {
