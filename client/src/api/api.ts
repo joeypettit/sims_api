@@ -898,3 +898,20 @@ export async function deleteGroup(groupId: string) {
     throw new Error(`Error deleting group: ${error}`);
   }
 }
+
+export async function duplicateProjectArea({
+  areaId,
+  name,
+}: {
+  areaId: string;
+  name: string;
+}) {
+  try {
+    const response = await axios.post(`/api/project-areas/${areaId}/duplicate`, {
+      name,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error duplicating project area: ${error}`);
+  }
+}

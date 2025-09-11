@@ -30,9 +30,23 @@ export const lineItemGroupFullSelect = {
   }
 }
 
-
+// Original select without project relation
 export const projectAreaFullSelect = {
   include: {
     lineItemGroups: lineItemGroupFullSelect
+  }
+}
+
+// New select with project relation for duplicate operations
+export const projectAreaWithProjectSelect = {
+  include: {
+    lineItemGroups: lineItemGroupFullSelect,
+    project: {
+      include: {
+        users: true,
+        clients: true,
+        stars: true
+      }
+    }
   }
 }

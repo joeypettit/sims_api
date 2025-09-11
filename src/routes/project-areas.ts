@@ -91,4 +91,31 @@ router.delete("/:areaId", async (req, res) => {
   }
 });
 
+router.post("/:areaId/duplicate", async (req, res) => {
+  const { areaId } = req.params;
+  const { name } = req.body;
+
+  if (!name || name.trim() === "") {
+    res.status(400).json({
+      error: "name is required",
+    });
+    return;
+  }
+
+  try {
+    const result = await projectAreaService.duplicate({ 
+      areaId, 
+      name: name.trim()
+    });
+    res.status(201).json(result);
+  } catch (error) {
+    console.error(`Error duplicating Project Area with id ${areaId}:`, error);
+    if ((error as Error).message.includes("not found")) {
+      res.status(404).json({ error: (error as Error).message });
+    } else {
+      res.status(500).json({ error: "Error duplicating Project Area" });
+    }
+  }
+});
+
 export default router;

@@ -3,6 +3,9 @@ import prisma from "../../prisma/prisma-client";
 import { reindexEntitiesInArray, UpdatedItem } from "../utility/project-sort";
 import LineItemGroupsRepo from "../repository/groups-repo";
 import { lineItemGroupFullSelect } from "../repository/query-objects";
+import { LineItemsService } from "./line-items-service";
+
+const lineItemService = new LineItemsService();
 
 const groupWithLineItem = Prisma.validator<Prisma.LineItemGroupDefaultArgs>()({
   include: { lineItems: true }
@@ -261,5 +264,20 @@ export class GroupsService {
       console.error("Error deleting group", error);
       throw error;
     }
+  }
+
+  buildDuplicateData(group: any) {
+    return {
+      name: group.name,
+      groupCategory: {
+        connect: { id: group.groupCategoryId },
+      },
+      indexInCategory: group.indexInCategory,
+      lineItems: {
+        create: group.lineItems.map((item: any) => 
+          lineItemService.buildDuplicateData(item)
+        ),
+      },
+    };
   }
 }

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { FaPen, FaPlus, FaRegStar, FaStar, FaTrash } from "react-icons/fa";
+import { FaCopy, FaPen, FaPlus, FaRegStar, FaStar, FaTrash } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteProject, getProjectById, getProjectCostRange, isProjectStarred, removeClientFromProject, removeUserFromProject, starProject, unstarProject, updateProjectDates } from "../../api/api";
 import AddProjectAreaModal from "../../components/add-project-area-modal";
@@ -8,6 +8,7 @@ import AddProjectClientModal from "../../components/add-project-client-modal";
 import AddProjectManagerModal from "../../components/add-project-manager-modal";
 import Button from "../../components/button";
 import DeleteProjectAreaModal from "../../components/delete-project-area-modal";
+import DuplicateProjectAreaModal from "../../components/duplicate-project-area-modal";
 import IconButton from "../../components/icon-button";
 import Modal from "../../components/modal";
 import PanelHeaderBar from "../../components/page-header-bar";
@@ -22,7 +23,9 @@ export default function ProjectDetails() {
   const [showAddManagerModal, setShowAddManagerModal] = useState(false);
   const [showAddClientModal, setShowAddClientModal] = useState(false);
   const [showDeleteAreaModal, setShowDeleteAreaModal] = useState(false);
+  const [showDuplicateAreaModal, setShowDuplicateAreaModal] = useState(false);
   const [selectedAreaToDelete, setSelectedAreaToDelete] = useState<{ id: string; name: string | null } | null>(null);
+  const [selectedAreaToDuplicate, setSelectedAreaToDuplicate] = useState<{ id: string; name: string | null } | null>(null);
   const [managerErrorMessage, setManagerErrorMessage] = useState<string | null>(null);
   const [clientErrorMessage, setClientErrorMessage] = useState<string | null>(null);
   const [isEditingDates, setIsEditingDates] = useState(false);
@@ -134,6 +137,17 @@ export default function ProjectDetails() {
   function handleDeleteModalClose() {
     setShowDeleteAreaModal(false);
     setSelectedAreaToDelete(null);
+  }
+
+  function handleDuplicateAreaClick(areaId: string, areaName: string | null, e: React.MouseEvent) {
+    e.stopPropagation();
+    setSelectedAreaToDuplicate({ id: areaId, name: areaName });
+    setShowDuplicateAreaModal(true);
+  }
+
+  function handleDuplicateModalClose() {
+    setShowDuplicateAreaModal(false);
+    setSelectedAreaToDuplicate(null);
   }
 
   function getProjectTotalCost() {
@@ -318,12 +332,18 @@ export default function ProjectDetails() {
                     onClick={() => navigate(`area/${area.id}`)}
                   >
                     <span>{area.name}</span>
-                    <IconButton
-                      icon={<FaTrash />}
-                      onClick={(e) => handleDeleteAreaClick(area.id, area.name, e)}
-                      className="opacity-0 group-hover:opacity-100"
-                      title="Delete area"
-                    />
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100">
+                      <IconButton
+                        icon={<FaCopy />}
+                        onClick={(e) => handleDuplicateAreaClick(area.id, area.name, e)}
+                        title="Duplicate area"
+                      />
+                      <IconButton
+                        icon={<FaTrash />}
+                        onClick={(e) => handleDeleteAreaClick(area.id, area.name, e)}
+                        title="Delete area"
+                      />
+                    </div>
                   </li>
                 );
               })}
@@ -360,6 +380,16 @@ export default function ProjectDetails() {
           areaId={selectedAreaToDelete.id}
           projectId={id || ''}
           areaName={selectedAreaToDelete.name || ''}
+        />
+      )}
+
+      {selectedAreaToDuplicate && (
+        <DuplicateProjectAreaModal
+          isOpen={showDuplicateAreaModal}
+          setIsOpen={handleDuplicateModalClose}
+          areaId={selectedAreaToDuplicate.id}
+          projectId={id || ''}
+          originalAreaName={selectedAreaToDuplicate.name || ''}
         />
       )}
 

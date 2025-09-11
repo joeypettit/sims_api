@@ -48,4 +48,16 @@ export class OptionsService {
       throw Error("");
     }
   }
+
+  buildDuplicateData(option: any) {
+    return {
+      description: option.description,
+      lowCostInDollarsPerUnit: option.lowCostInDollarsPerUnit,
+      highCostInDollarsPerUnit: option.highCostInDollarsPerUnit,
+      exactCostInDollarsPerUnit: option.exactCostInDollarsPerUnit,
+      priceAdjustmentMultiplier: option.priceAdjustmentMultiplier,
+      isSelected: option.isSelected,
+      optionTierId: option.optionTierId,
+    };
+  }
 }

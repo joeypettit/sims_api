@@ -22,6 +22,12 @@ type CreateFromTemplateParams = {
   templateId: string;
 };
 
+type DuplicateAreaParams = {
+  areaId: string;
+  name: string;
+  userId: string;
+};
+
 
 export class ProjectAreasService {
 
@@ -342,6 +348,67 @@ export class ProjectAreasService {
     const salePricePerUnit = (costPerUnit / (1 - marginDecimal)) * priceAdjustmentMultiplier;
     // Calculate total price
     return salePricePerUnit * quantity;
+  }
+
+  async duplicate({ areaId, name }: { areaId: string; name: string }) {
+    try {
+      // Get the original area with project data for duplicate
+      const originalArea = await prisma.projectArea.findUnique({
+        where: { id: areaId },
+        include: {
+          lineItemGroups: {
+            include: {
+              lineItems: {
+                include: {
+                  lineItemOptions: true,
+                },
+              },
+            },
+          },
+          project: {
+            include: {
+              users: true,
+              clients: true,
+              stars: true
+            }
+          }
+        }
+      });
+
+      if (!originalArea) {
+        throw new Error(`Project area with ID ${areaId} not found`);
+      }
+
+      // Build the duplicate data structure
+      const duplicateData = this.buildDuplicateData(originalArea, name);
+
+      // Create the duplicated area using Prisma directly
+      const duplicatedArea = await prisma.projectArea.create({
+        data: duplicateData,
+        select: {
+          id: true
+        }
+      });
+
+      return { id: duplicatedArea.id };
+    } catch (error) {
+      console.error(`Error duplicating project area ${areaId}:`, error);
+      throw error;
+    }
+  }
+
+  buildDuplicateData(originalArea: any, name: string) {
+    return {
+      name,
+      project: {
+        connect: { id: originalArea.project.id },
+      },
+      lineItemGroups: {
+        create: originalArea.lineItemGroups.map((group: any) => 
+          groupService.buildDuplicateData(group)
+        ),
+      },
+    };
   }
 
 }
