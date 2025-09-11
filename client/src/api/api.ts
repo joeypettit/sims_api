@@ -915,3 +915,20 @@ export async function duplicateProjectArea({
     throw new Error(`Error duplicating project area: ${error}`);
   }
 }
+
+export async function duplicateAreaTemplate({
+  templateId,
+  name,
+}: {
+  templateId: string;
+  name: string;
+}) {
+  try {
+    const response = await axios.post(`/api/templates/area/${templateId}/duplicate`, {
+      name,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error duplicating template: ${error}`);
+  }
+}

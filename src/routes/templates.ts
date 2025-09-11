@@ -5,8 +5,11 @@ import { simulateNetworkLatency } from "../util";
 import { ProjectArea } from "@prisma/client";
 import { AreaTemplate } from "@prisma/client";
 import { isAuthenticated } from "../middleware/auth";
+import { TemplatesService } from "../services/templates-service";
 
 router.use(isAuthenticated);
+
+const templatesService = new TemplatesService();
 
 router.get("/area/all-templates", async (req, res) => {
   try {
@@ -135,6 +138,33 @@ router.delete('/area/:templateId', async (req, res) => {
   } catch (error) {
     console.error('Error deleting template:', error);
     res.status(500).json({ error: 'Failed to delete template' });
+  }
+});
+
+router.post("/area/:templateId/duplicate", async (req, res) => {
+  const { templateId } = req.params;
+  const { name } = req.body;
+
+  if (!name || name.trim() === "") {
+    res.status(400).json({
+      error: "name is required",
+    });
+    return;
+  }
+
+  try {
+    const result = await templatesService.duplicate({ 
+      templateId, 
+      name: name.trim()
+    });
+    res.status(201).json(result);
+  } catch (error) {
+    console.error(`Error duplicating template with id ${templateId}:`, error);
+    if ((error as Error).message.includes("not found")) {
+      res.status(404).json({ error: (error as Error).message });
+    } else {
+      res.status(500).json({ error: "Error duplicating template" });
+    }
   }
 });
 

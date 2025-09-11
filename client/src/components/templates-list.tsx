@@ -1,10 +1,11 @@
 import { AreaTemplate } from "../app/types/area-template";
 import Button from "./button";
 import IconButton from "./icon-button";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaCopy, FaPlus, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Modal from "./modal";
 import { useState } from "react";
+import DuplicateTemplateModal from "./duplicate-template-modal";
 
 type TemplatesListProps = {
   templates: AreaTemplate[];
@@ -23,10 +24,23 @@ export default function TemplatesList({
 }: TemplatesListProps) {
   const navigate = useNavigate();
   const [templateToDelete, setTemplateToDelete] = useState<AreaTemplate | null>(null);
+  const [templateToDuplicate, setTemplateToDuplicate] = useState<AreaTemplate | null>(null);
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
   const handleDelete = (template: AreaTemplate, e: React.MouseEvent) => {
     e.stopPropagation();
     setTemplateToDelete(template);
+  };
+
+  const handleDuplicate = (template: AreaTemplate, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setTemplateToDuplicate(template);
+    setShowDuplicateModal(true);
+  };
+
+  const handleDuplicateModalClose = () => {
+    setShowDuplicateModal(false);
+    setTemplateToDuplicate(null);
   };
 
   return (
@@ -56,13 +70,19 @@ export default function TemplatesList({
               onClick={() => navigate(`/settings/edit-template/${template.id}`)}
             >
               <span>{template.name}</span>
-              <IconButton
-                icon={<FaTrash />}
-                onClick={(e) => handleDelete(template, e)}
-                disabled={isRemoveLoading}
-                className="opacity-0 group-hover:opacity-100"
-                title="Delete template"
-              />
+              <div className="flex gap-1 opacity-0 group-hover:opacity-100">
+                <IconButton
+                  icon={<FaCopy />}
+                  onClick={(e) => handleDuplicate(template, e)}
+                  title="Duplicate template"
+                />
+                <IconButton
+                  icon={<FaTrash />}
+                  onClick={(e) => handleDelete(template, e)}
+                  disabled={isRemoveLoading}
+                  title="Delete template"
+                />
+              </div>
             </li>
           ))}
         </ul>
@@ -101,6 +121,15 @@ export default function TemplatesList({
           </ul>
         </div>
       </Modal>
+
+      {templateToDuplicate && (
+        <DuplicateTemplateModal
+          isOpen={showDuplicateModal}
+          setIsOpen={handleDuplicateModalClose}
+          templateId={templateToDuplicate.id}
+          originalTemplateName={templateToDuplicate.name}
+        />
+      )}
     </>
   );
-} 
+}

@@ -397,18 +397,27 @@ export class ProjectAreasService {
     }
   }
 
-  buildDuplicateData(originalArea: any, name: string) {
-    return {
+  buildDuplicateData(originalArea: any, name: string, isTemplate: boolean = false) {
+    const baseData = {
       name,
-      project: {
-        connect: { id: originalArea.project.id },
-      },
       lineItemGroups: {
         create: originalArea.lineItemGroups.map((group: any) => 
           groupService.buildDuplicateData(group)
         ),
       },
     };
+
+    // Only add project connection if it's not a template
+    if (!isTemplate) {
+      return {
+        ...baseData,
+        project: {
+          connect: { id: originalArea.project.id },
+        },
+      };
+    }
+
+    return baseData;
   }
 
 }
