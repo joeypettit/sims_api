@@ -38,13 +38,17 @@ export default function QuantityInput({
     isFocusedRef.current = true;
   };
 
-  const increment = () => {
+  const increment = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.currentTarget.blur(); // Remove focus to prevent scroll jump
     const newValue = Math.floor(Number(inputValue)) + 1;
     setInputValue(newValue.toFixed(2));
     onChange(newValue);
   };
 
-  const decrement = () => {
+  const decrement = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.currentTarget.blur(); // Remove focus to prevent scroll jump
     if (Number(inputValue) - 1 < 0) return;
     const newValue = Math.floor(Number(inputValue)) - 1;
     setInputValue(newValue.toFixed(2));
@@ -57,6 +61,7 @@ export default function QuantityInput({
         type="button"
         className="flex-shrink-0 text-sims-green-900 hover:text-sims-green-600 hover:shadow-inner focus:outline-none px-1 flex justify-center items-center"
         onClick={decrement}
+        onMouseDown={(e) => e.preventDefault()} // Prevent focus on mousedown
       >
         &ndash;
       </button>
@@ -76,6 +81,7 @@ export default function QuantityInput({
         type="button"
         className="flex-shrink-0 text-sims-green-900 hover:text-sims-green-600 hover:shadow-inner focus:outline-none px-1 flex justify-center items-center"
         onClick={increment}
+        onMouseDown={(e) => e.preventDefault()} // Prevent focus on mousedown
       >
         +
       </button>
