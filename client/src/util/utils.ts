@@ -183,6 +183,48 @@ export function formatNumberWithCommas(num: number | string): string {
   return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+/**
+ * Calculates the total sale price for a specific tier across all groups in a project area.
+ * @param groups - Array of line item groups
+ * @param tierLevel - The tier level to calculate totals for (1, 2, or 3)
+ * @returns PriceRange with the total low and high prices for the tier
+ */
+export function getTierTotalSalePrice(
+  groups: LineItemGroup[],
+  tierLevel: number
+): PriceRange {
+  const totalPriceRange: PriceRange = {
+    lowPriceInDollars: 0,
+    highPriceInDollars: 0,
+  };
+
+  groups.forEach((group) => {
+    group.lineItems.forEach((lineItem) => {
+      // Find the option that matches the tier level
+      const tierOption = lineItem.lineItemOptions.find(
+        (option) => option.optionTier.tierLevel === tierLevel
+      );
+
+      if (tierOption) {
+        const optionTotal = getOptionsTotalSalePrice({
+          option: tierOption,
+          lineItem: lineItem,
+        });
+
+        if (typeof optionTotal === "number") {
+          totalPriceRange.lowPriceInDollars += optionTotal;
+          totalPriceRange.highPriceInDollars += optionTotal;
+        } else {
+          totalPriceRange.lowPriceInDollars += optionTotal.lowPriceInDollars;
+          totalPriceRange.highPriceInDollars += optionTotal.highPriceInDollars;
+        }
+      }
+    });
+  });
+
+  return totalPriceRange;
+}
+
 export function simulateNetworkLatency(delay = 2000) {
   return new Promise<void>((resolve) => {
     setTimeout(() => {

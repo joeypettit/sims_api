@@ -304,7 +304,11 @@ export default function ProjectAreaProposal({
 
   return (
     <>
-      <StickyTierToolbar title={getTitle()} handleSetIsOpen={handleToggleOpenAllGroups} />
+      <StickyTierToolbar 
+        title={getTitle()} 
+        handleSetIsOpen={handleToggleOpenAllGroups}
+        lineItemGroups={projectAreaQuery.data?.lineItemGroups || []}
+      />
       {categoriesQuery.data?.map((category) => {
         if (!projectAreaQuery.data?.lineItemGroups) return;
         console.log("projectAreaQuery.data?.lineItemGroups",projectAreaQuery.data?.lineItemGroups)
