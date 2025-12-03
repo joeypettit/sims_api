@@ -308,6 +308,7 @@ export default function ProjectAreaProposal({
         title={getTitle()} 
         handleSetIsOpen={handleToggleOpenAllGroups}
         lineItemGroups={projectAreaQuery.data?.lineItemGroups || []}
+        estimatedTotal={areaCostQuery.data || null}
       />
       {categoriesQuery.data?.map((category) => {
         if (!projectAreaQuery.data?.lineItemGroups) return;

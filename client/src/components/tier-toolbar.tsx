@@ -3,6 +3,7 @@ import Button from "./button";
 import { IoChevronBackOutline } from "react-icons/io5";
 import OptionTierBadge from "./option-tier-badge";
 import type { LineItemGroup } from "../app/types/line-item-group";
+import type { PriceRange } from "../app/types/price-range";
 import { getTierTotalSalePrice, formatNumberWithCommas } from "../util/utils";
 
 type StickyTierToolbarProps = {
@@ -10,6 +11,7 @@ type StickyTierToolbarProps = {
   title: string;
   backButtonCallback?: () => void;
   lineItemGroups?: LineItemGroup[];
+  estimatedTotal?: PriceRange | null;
 }
 
 export default function StickyTierToolbar({ handleSetIsOpen,
@@ -18,6 +20,7 @@ export default function StickyTierToolbar({ handleSetIsOpen,
     window.history.back();
   },
   lineItemGroups = [],
+  estimatedTotal,
 }: StickyTierToolbarProps) {
   const premierTotal = getTierTotalSalePrice(lineItemGroups, 1);
   const designerTotal = getTierTotalSalePrice(lineItemGroups, 2);
@@ -74,8 +77,13 @@ export default function StickyTierToolbar({ handleSetIsOpen,
             {formatPriceRange(luxuryTotal)}
           </div>
         </div>
-        <div className="flex justify-end items-center text-sm font-bold pr-4 border-l border-gray-100">
-          Estimated Cost
+        <div className="flex flex-col justify-end items-end text-sm font-bold pr-4 border-l border-gray-100">
+          <div>Estimated Total:</div>
+          {estimatedTotal && (
+            <div className="text-xs text-gray-600 mt-2 font-normal">
+              {formatPriceRange(estimatedTotal)}
+            </div>
+          )}
         </div>
       </div>
     </div>
