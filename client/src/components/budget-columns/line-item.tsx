@@ -187,7 +187,7 @@ export default function LineItemDisplay({
               />
             );
           })}
-          <div className="flex justify-end items-center text-sm font-bold pr-4 col-end-6 border-l border-gray-100">
+          <div className="flex justify-end items-center text-sm font-normal pr-4 col-end-6 border-l border-gray-100">
             {getCurrentLineTotal()}
           </div>
           {/* <hr className="border border-gray-100 mx-4" /> */}

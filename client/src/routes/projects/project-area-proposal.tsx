@@ -17,7 +17,7 @@ import Modal from "../../components/modal";
 import SimsSpinner from "../../components/sims-spinner/sims-spinner";
 import StickyTierToolbar from "../../components/tier-toolbar";
 import { validateGroupName } from "../../util/form-validation";
-import { filterGroupsByCategory, formatNumberWithCommas, getGroupsTotalSalePrice, sortArrayByIndexProperty, updateGroupIndexInCategory } from "../../util/utils";
+import { filterGroupsByCategory, getGroupsTotalSalePrice, sortArrayByIndexProperty, updateGroupIndexInCategory } from "../../util/utils";
 
 type ProjectAreaProposalProps = {
   areaId?: string;
@@ -181,18 +181,6 @@ export default function ProjectAreaProposal({
     },
   });
 
-  function getAreasTotalSalePrice() {
-    if (!areaCostQuery.data) return "-";
-    
-    if (areaCostQuery.data.lowPriceInDollars <= 0 && areaCostQuery.data.highPriceInDollars <= 0) {
-      return "-";
-    }
-
-    const lowPrice = formatNumberWithCommas(areaCostQuery.data.lowPriceInDollars);
-    const highPrice = formatNumberWithCommas(areaCostQuery.data.highPriceInDollars);
-    return `$${lowPrice} - $${highPrice}`;
-  }
-
   async function handleCreateGroup() {
     setCreateGroupErrorMessage("");
     const errorMessage = validateGroupName(groupNameInput);
@@ -347,11 +335,6 @@ export default function ProjectAreaProposal({
         );
       })}
       {renderCreateGroupModal()}
-      <div className="flex justify-center">
-        <div className="p-8 border border-gray-300 font-bold rounded shadow">
-          Project Total: {getAreasTotalSalePrice()}
-        </div>
-      </div>
     </>
   );
 }

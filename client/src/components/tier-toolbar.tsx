@@ -80,7 +80,7 @@ export default function StickyTierToolbar({ handleSetIsOpen,
         <div className="flex flex-col justify-end items-end text-sm font-bold pr-4 border-l border-gray-100">
           <div>Estimated Total:</div>
           {estimatedTotal && (
-            <div className="text-xs text-gray-600 mt-2 font-normal">
+            <div className="text-sm font-normal mt-2">
               {formatPriceRange(estimatedTotal)}
             </div>
           )}
