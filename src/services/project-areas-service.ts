@@ -90,6 +90,15 @@ export class ProjectAreasService {
         throw new Error(`Template with ID ${templateId} not found`);
       }
 
+      // Sort groups by indexInCategory to preserve order
+      const sortedGroups = [...templateArea.projectArea.lineItemGroups].sort((a, b) => {
+        if (a.indexInCategory !== b.indexInCategory) {
+          return a.indexInCategory - b.indexInCategory;
+        }
+        // Use ID as tiebreaker for groups with same index
+        return a.id.localeCompare(b.id);
+      });
+
       const newArea = await prisma.projectArea.create({
         data: {
           name,
@@ -97,13 +106,24 @@ export class ProjectAreasService {
             connect: { id: projectId },
           },
           lineItemGroups: {
-            create: templateArea.projectArea.lineItemGroups.map((group) => ({
-              name: group.name,
-              groupCategory: {
-                connect: { id: group.groupCategoryId },
-              },
-              lineItems: {
-                create: group.lineItems.map((item) => ({
+            create: sortedGroups.map((group) => {
+              // Sort line items by indexInGroup to preserve order
+              const sortedLineItems = [...group.lineItems].sort((a, b) => {
+                if (a.indexInGroup !== b.indexInGroup) {
+                  return a.indexInGroup - b.indexInGroup;
+                }
+                // Use ID as tiebreaker for items with same index
+                return a.id.localeCompare(b.id);
+              });
+
+              return {
+                name: group.name,
+                indexInCategory: group.indexInCategory,
+                groupCategory: {
+                  connect: { id: group.groupCategoryId },
+                },
+                lineItems: {
+                  create: sortedLineItems.map((item) => ({
                   name: item.name,
                   quantity: item.quantity,
                   unitId: item.unitId,
@@ -124,7 +144,8 @@ export class ProjectAreasService {
                   },
                 })),
               },
-            })),
+              };
+            }),
           },
         },
       });

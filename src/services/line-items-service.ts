@@ -16,6 +16,15 @@ export class LineItemsService {
     }
   }
 
+  async setLineItemIndexInGroup({ lineItemId, groupId, newIndex }: { lineItemId: string, groupId: string, newIndex: number }) {
+    try {
+      return await lineItemsRepo.setLineItemIndexInGroup({ lineItemId, groupId, newIndex });
+    } catch (error) {
+      console.error("Error setting line item index in group", error);
+      throw error;
+    }
+  }
+
   buildDuplicateData(item: any) {
     return {
       name: item.name,

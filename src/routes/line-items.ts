@@ -285,21 +285,28 @@ router.put("/:lineItemId/unselect-option/:optionId", async (req, res) => {
 
 router.put("/:lineItemId/set-index", async (req, res) => {
   const { lineItemId } = req.params;
-  const { newIndex } = req.body;
+  const { newIndex, groupId } = req.body;
 
   if (typeof newIndex !== 'number') {
     res.status(400).json({ error: "New index must be a number" });
     return;
   }
 
+  if (!groupId || typeof groupId !== 'string') {
+    res.status(400).json({ error: "groupId is required" });
+    return;
+  }
+
   try {
     const lineItemsService = new LineItemsService();
-    const result = await lineItemsService.updateIndexInGroup({
+    const result = await lineItemsService.setLineItemIndexInGroup({
       lineItemId,
-      indexInGroup: newIndex
+      groupId,
+      newIndex
     });
     res.status(200).json(result);
   } catch (error) {
+    console.error("Error updating line item index:", error);
     res.status(500).json({ error: "An error occurred while updating the line item index" });
   }
 });
