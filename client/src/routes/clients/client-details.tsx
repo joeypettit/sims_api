@@ -205,7 +205,7 @@ export default function ClientDetails() {
           </div>
 
           {/* Projects List */}
-          <ProjectsList projects={client.projects || []} />
+          <ProjectsList projects={client.projects || []} clientId={client.id} />
         </div>
       </div>
 
