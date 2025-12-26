@@ -91,6 +91,8 @@ export default function ProjectAreaSettings() {
       if (projectId) {
         queryClient.invalidateQueries({ queryKey: ["project-cost", projectId] });
       }
+      // Invalidate all line-item queries so edit pages show updated margins
+      queryClient.invalidateQueries({ queryKey: ["line-item"] });
     },
     onError: (error: Error) => {
       setMarginInputError(error.message || "Failed to update margins. Please try again.");

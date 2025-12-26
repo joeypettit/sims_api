@@ -89,6 +89,8 @@ export default function TemplateSettings() {
       if (templateQuery.data?.projectAreaId) {
         queryClient.invalidateQueries({ queryKey: ["area", templateQuery.data.projectAreaId] });
       }
+      // Invalidate all line-item queries so edit pages show updated margins
+      queryClient.invalidateQueries({ queryKey: ["line-item"] });
     },
     onError: (error: Error) => {
       setMarginInputError(error.message || "Failed to update margins. Please try again.");
