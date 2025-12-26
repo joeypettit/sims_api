@@ -83,8 +83,9 @@ export default function ProjectAreaSettings() {
       setIsConfirmModalOpen(false);
       setMarginPercentage(undefined);
       setMarginInputError(null);
-      // Invalidate area query to refetch with updated margins
+      // Invalidate area queries (both with and without areaId)
       queryClient.invalidateQueries({ queryKey: ["area", areaId] });
+      queryClient.invalidateQueries({ queryKey: ["area"] });
       // Also invalidate area cost query since margins affect pricing
       queryClient.invalidateQueries({ queryKey: ["area-cost", areaId] });
       // Invalidate project cost if we have projectId
@@ -93,6 +94,8 @@ export default function ProjectAreaSettings() {
       }
       // Invalidate all line-item queries so edit pages show updated margins
       queryClient.invalidateQueries({ queryKey: ["line-item"] });
+      // Invalidate area-template queries (used in edit-line-item)
+      queryClient.invalidateQueries({ queryKey: ["area-template"] });
     },
     onError: (error: Error) => {
       setMarginInputError(error.message || "Failed to update margins. Please try again.");

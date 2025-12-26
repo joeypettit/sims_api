@@ -85,9 +85,13 @@ export default function TemplateSettings() {
       setMarginInputError(null);
       // Invalidate template query to refetch with updated margins
       queryClient.invalidateQueries({ queryKey: ["area-template", templateId] });
+      queryClient.invalidateQueries({ queryKey: ["area-template"] });
       // Also invalidate the area query since templates use project areas
       if (templateQuery.data?.projectAreaId) {
         queryClient.invalidateQueries({ queryKey: ["area", templateQuery.data.projectAreaId] });
+        queryClient.invalidateQueries({ queryKey: ["area"] });
+        // Invalidate area cost query since margins affect pricing
+        queryClient.invalidateQueries({ queryKey: ["area-cost", templateQuery.data.projectAreaId] });
       }
       // Invalidate all line-item queries so edit pages show updated margins
       queryClient.invalidateQueries({ queryKey: ["line-item"] });
