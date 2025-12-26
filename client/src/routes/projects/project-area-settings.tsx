@@ -92,8 +92,9 @@ export default function ProjectAreaSettings() {
       if (projectId) {
         queryClient.invalidateQueries({ queryKey: ["project-cost", projectId] });
       }
-      // Invalidate all line-item queries so edit pages show updated margins
+      // Invalidate and refetch all line-item queries so edit pages show updated margins
       queryClient.invalidateQueries({ queryKey: ["line-item"] });
+      queryClient.refetchQueries({ queryKey: ["line-item"] });
       // Invalidate area-template queries (used in edit-line-item)
       queryClient.invalidateQueries({ queryKey: ["area-template"] });
     },

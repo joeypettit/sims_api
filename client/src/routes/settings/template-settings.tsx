@@ -93,8 +93,9 @@ export default function TemplateSettings() {
         // Invalidate area cost query since margins affect pricing
         queryClient.invalidateQueries({ queryKey: ["area-cost", templateQuery.data.projectAreaId] });
       }
-      // Invalidate all line-item queries so edit pages show updated margins
+      // Invalidate and refetch all line-item queries so edit pages show updated margins
       queryClient.invalidateQueries({ queryKey: ["line-item"] });
+      queryClient.refetchQueries({ queryKey: ["line-item"] });
     },
     onError: (error: Error) => {
       setMarginInputError(error.message || "Failed to update margins. Please try again.");
