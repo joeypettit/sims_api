@@ -1,17 +1,19 @@
 import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createBlankProject } from "../api/api";
+import { createBlankProject, addClientToProject } from "../api/api";
 import Modal from "./modal";
 
 type AddProjectModalProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  clientId?: string; // Optional client ID to pre-populate
 };
 
 export default function AddProjectModal({
   isOpen,
   setIsOpen,
+  clientId,
 }: AddProjectModalProps) {
   const navigate = useNavigate();
   const [projectNameInput, setProjectNameInput] = useState("");
@@ -22,7 +24,17 @@ export default function AddProjectModal({
       const result = await createBlankProject({ name: projectNameInput });
       return result;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      // If clientId is provided, add the client to the project
+      if (clientId) {
+        try {
+          await addClientToProject(data.id, clientId);
+        } catch (error) {
+          console.error("Error adding client to project:", error);
+          setModalErrorMessage(`Project created but failed to add client: ${error}`);
+          return;
+        }
+      }
       navigate(`/project/${data.id}`);
     },
     onError: (error) => {
