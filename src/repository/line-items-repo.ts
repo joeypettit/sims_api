@@ -94,4 +94,41 @@ export default class LineItemsRepo {
       throw new Error(`Error setting line item index in group: ${lineItemId} - ${error}`);
     }
   }
+
+  async updateAllMarginsInProjectArea({ projectAreaId, marginDecimal }: { projectAreaId: string, marginDecimal: number }) {
+    try {
+      // First, get all line item groups in the project area
+      const groups = await prisma.lineItemGroup.findMany({
+        where: {
+          projectAreaId: projectAreaId
+        },
+        select: {
+          id: true
+        }
+      });
+
+      const groupIds = groups.map(group => group.id);
+
+      if (groupIds.length === 0) {
+        // No groups found, return empty result
+        return { count: 0 };
+      }
+
+      // Update all line items in all groups of this project area
+      const result = await prisma.lineItem.updateMany({
+        where: {
+          lineItemGroupId: {
+            in: groupIds
+          }
+        },
+        data: {
+          marginDecimal: marginDecimal
+        }
+      });
+
+      return result;
+    } catch (error) {
+      throw new Error(`Error updating margins for all line items in project area ${projectAreaId}: ${error}`);
+    }
+  }
 }
