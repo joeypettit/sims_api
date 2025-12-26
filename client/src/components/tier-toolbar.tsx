@@ -1,6 +1,9 @@
 import Button from "./button";
+import IconButton from "./icon-button";
 
 import { IoChevronBackOutline } from "react-icons/io5";
+import { IoMdSettings } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 import OptionTierBadge from "./option-tier-badge";
 import type { LineItemGroup } from "../app/types/line-item-group";
 import type { PriceRange } from "../app/types/price-range";
@@ -12,6 +15,9 @@ type StickyTierToolbarProps = {
   backButtonCallback?: () => void;
   lineItemGroups?: LineItemGroup[];
   estimatedTotal?: PriceRange | null;
+  projectId?: string;
+  areaId?: string;
+  templateId?: string;
 }
 
 export default function StickyTierToolbar({ handleSetIsOpen,
@@ -21,10 +27,22 @@ export default function StickyTierToolbar({ handleSetIsOpen,
   },
   lineItemGroups = [],
   estimatedTotal,
+  projectId,
+  areaId,
+  templateId,
 }: StickyTierToolbarProps) {
+  const navigate = useNavigate();
   const premierTotal = getTierTotalSalePrice(lineItemGroups, 1);
   const designerTotal = getTierTotalSalePrice(lineItemGroups, 2);
   const luxuryTotal = getTierTotalSalePrice(lineItemGroups, 3);
+
+  const handleSettingsClick = () => {
+    if (templateId) {
+      navigate(`/settings/edit-template/${templateId}/settings`);
+    } else if (projectId && areaId) {
+      navigate(`/project/${projectId}/area/${areaId}/settings`);
+    }
+  };
 
   function formatPriceRange(priceRange: { lowPriceInDollars: number; highPriceInDollars: number }): string {
     const low = formatNumberWithCommas(priceRange.lowPriceInDollars);
@@ -36,13 +54,21 @@ export default function StickyTierToolbar({ handleSetIsOpen,
   }
   return (
     <div className="flex flex-col bg-white pt-1 pb-1 sticky -top-4 z-50 border-b-2">
-      <div className="flex flex-row justify-start">
+      <div className="flex flex-row justify-start items-center">
         <Button variant="white" onClick={backButtonCallback}>
           <IoChevronBackOutline />
         </Button>
         <div className="text-lg font-bold flex justify-center flex-grow">
           {title}
         </div>
+        {(templateId || (projectId && areaId)) && (
+          <IconButton
+            icon={<IoMdSettings size={20} />}
+            onClick={handleSettingsClick}
+            title={templateId ? "Template Settings" : "Area Settings"}
+            className="mr-2"
+          />
+        )}
       </div>
       <div className="grid grid-cols-5 gap-2 py-2 pl-4" style={{minWidth: "1150px"}}>
         <div>

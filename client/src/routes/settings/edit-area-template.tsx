@@ -32,7 +32,11 @@ export default function EditAreaTemplate() {
   }
   return (
     <>
-      <ProjectAreaProposal areaId={areaTemplateQuery.data?.projectAreaId} templateTitle={areaTemplateQuery.data?.name} />
+      <ProjectAreaProposal 
+        areaId={areaTemplateQuery.data?.projectAreaId} 
+        templateTitle={areaTemplateQuery.data?.name}
+        templateId={templateId}
+      />
     </>
   );
 }

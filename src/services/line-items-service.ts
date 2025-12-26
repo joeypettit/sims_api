@@ -25,6 +25,15 @@ export class LineItemsService {
     }
   }
 
+  async updateAllMarginsInProjectArea({ projectAreaId, marginDecimal }: { projectAreaId: string, marginDecimal: number }) {
+    try {
+      return await lineItemsRepo.updateAllMarginsInProjectArea({ projectAreaId, marginDecimal });
+    } catch (error) {
+      console.error("Error updating all margins in project area", error);
+      throw error;
+    }
+  }
+
   buildDuplicateData(item: any) {
     return {
       name: item.name,

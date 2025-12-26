@@ -22,11 +22,13 @@ import { filterGroupsByCategory, getGroupsTotalSalePrice, sortArrayByIndexProper
 type ProjectAreaProposalProps = {
   areaId?: string;
   templateTitle?: string;
+  templateId?: string;
 };
 
 export default function ProjectAreaProposal({
   areaId,
-  templateTitle
+  templateTitle,
+  templateId
 }: ProjectAreaProposalProps) {
   const queryClient = useQueryClient();
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
@@ -297,6 +299,9 @@ export default function ProjectAreaProposal({
         handleSetIsOpen={handleToggleOpenAllGroups}
         lineItemGroups={projectAreaQuery.data?.lineItemGroups || []}
         estimatedTotal={areaCostQuery.data || null}
+        projectId={projectAreaQuery.data?.projectId}
+        areaId={areaId}
+        templateId={templateId}
       />
       {categoriesQuery.data?.map((category) => {
         if (!projectAreaQuery.data?.lineItemGroups) return;

@@ -117,12 +117,12 @@ export class ProjectAreasService {
               });
 
               return {
-                name: group.name,
+              name: group.name,
                 indexInCategory: group.indexInCategory,
-                groupCategory: {
-                  connect: { id: group.groupCategoryId },
-                },
-                lineItems: {
+              groupCategory: {
+                connect: { id: group.groupCategoryId },
+              },
+              lineItems: {
                   create: sortedLineItems.map((item) => ({
                   name: item.name,
                   quantity: item.quantity,

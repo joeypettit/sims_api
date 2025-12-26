@@ -916,6 +916,23 @@ export async function duplicateProjectArea({
   }
 }
 
+export async function updateAllLineItemMarginsInArea({
+  areaId,
+  marginPercentage,
+}: {
+  areaId: string;
+  marginPercentage: number;
+}) {
+  try {
+    const response = await axios.put(`/api/project-areas/${areaId}/update-all-margins`, {
+      marginPercentage,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error updating all line item margins: ${error}`);
+  }
+}
+
 export async function duplicateAreaTemplate({
   templateId,
   name,

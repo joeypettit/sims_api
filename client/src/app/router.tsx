@@ -17,6 +17,8 @@ import ChangePasswordPage from '../routes/change-password/change-password-page';
 import ProfilePage from '../routes/profile/profile-page';
 import ProtectedRoute from '../components/protected-route';
 import MyProjectsPanel from "../routes/projects/my-projects";
+import ProjectAreaSettings from '../routes/projects/project-area-settings';
+import TemplateSettings from '../routes/settings/template-settings';
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +59,10 @@ export const router = createBrowserRouter([
         element: <PanelWindow><EditProjectArea /></PanelWindow>
       },
       {
+        path: 'project/:id/area/:areaId/settings',
+        element: <PanelWindow><ProjectAreaSettings /></PanelWindow>
+      },
+      {
         path: 'users',
         element: (
           <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
@@ -79,6 +85,10 @@ export const router = createBrowserRouter([
       {
         path: 'settings/edit-template/:templateId',
         element: <PanelWindow><EditAreaTemplate /></PanelWindow>
+      },
+      {
+        path: 'settings/edit-template/:templateId/settings',
+        element: <PanelWindow><TemplateSettings /></PanelWindow>
       },
       {
         path: 'edit-line-item/:lineItemId',
